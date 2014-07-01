@@ -13,10 +13,8 @@ Prerequisites
 Source code installation
 -------------------------------------
 
-Just copy MyCogs folder and add it to yuor favore Python IDE.
-
-An offline version in PDF format is also available.
-Kivy ships with a bunch of compiled versions for different operative systems.
+Just copy MyCogs folder and add it to yuor favorite Python IDE.
+Soon will be provided links to the compiled files.
 
 Support
 -------
