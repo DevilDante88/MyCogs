@@ -1,0 +1,78 @@
+#: import main main
+#: import ListAdapter kivy.adapters.listadapter.ListAdapter
+
+<Label>:
+    font_name: "Gotham"
+
+<TextInput>:
+    font_name: "Gotham"
+
+MyCogsRoot:
+
+# BEGIN WEATHER_ROOT
+<MyCogsRoot>:
+
+    carousel: carousel
+    approved: approved
+    unapproved: unapproved
+    undefined: undefined
+    login: login
+    senderlist: senderlist
+    addslide: addslide
+    foundslide: foundslide
+    editslide: editslide
+
+    BoxLayout:
+        orientation: "vertical"
+        ActionBar:
+            ActionView:
+                use_separator: True
+                ActionPrevious:
+                    title: "MyCogs App"
+                    with_previous: False
+                ActionOverflow:
+                    ActionButton:
+                        text: "Logout"
+                        on_press: app.root.logout()
+                    ActionButton:
+                        text: "Settings"
+                        on_press: app.open_settings()
+                ActionButton:
+                    text: "Sender List"
+                    on_press: app.root.menu_callback(senderlist)
+                ActionButton:
+                    text: "Approved"
+                    id: "ab_ap"
+                    on_press: app.root.menu_callback(approved)
+                ActionButton:
+                    text: "Unapproved"
+                    id: "ab_unap"
+                    on_press: app.root.menu_callback(unapproved)
+                ActionButton:
+                    text: "Ambiguous"
+                    id: "ab_und"
+                    on_press: app.root.menu_callback(undefined)
+
+        Carousel:
+            id: carousel
+            on_current_slide: app.root.slide_update(carousel.current_slide)
+            Login:
+                id: login
+            SenderList:
+                id: senderlist
+            Approved:
+                id: approved
+            Unapproved:
+                id: unapproved
+            Undefined:
+                id: undefined
+            EditSlide:
+                id: editslide
+            AddSlide:
+                id: addslide
+            FoundSlide:
+                id: foundslide
+
+
+# END WEATHER_ROOT
+

@@ -1,0 +1,134 @@
+<IconButtonDOWN>
+    source: 'data/img/arrow_down.png'
+
+<IconButtonUP>
+    source: 'data/img/arrow_up.png'
+
+<MyLabel>:
+    markup: True
+    shorten: True
+    text_size: self.size
+
+<RowDetailView>:
+
+    size_hint_y: None
+    height: 95
+
+    canvas.before:
+        Color:
+            rgba: 0.13, 0.14, 0.15, 1
+        Rectangle:
+            # self here refers to the widget i.e FloatLayout
+            pos: self.pos
+            size: self.size
+
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+
+        BoxLayout:
+            size_hint_x: 0.98
+            size_hint_y: 0.94
+
+            canvas.before:
+                Color:
+                    rgba: 0.07, 0.074, 0.078, 0.9
+                Rectangle:
+                    # self here refers to the widget i.e FloatLayout
+                    pos: self.pos
+                    size: self.size
+
+            GridLayout:
+
+                id: 'lb'
+                cols: 6
+
+                BoxLayout:
+
+                    orientation: 'vertical'
+                    size_hint_x: 0.1
+
+                    AnchorLayout:
+
+                        anchor_x: 'center'
+                        anchor_y: 'center'
+                        size_hint_y: 0.5
+
+                        IconButtonUP:
+
+                            id: 'up'
+                            on_press: self.on_arrow_up_press()
+
+                    AnchorLayout:
+
+                        anchor_x: 'center'
+                        anchor_y: 'center'
+                        size_hint_y: 0.5
+
+                        IconButtonDOWN:
+
+                            id: 'down'
+                            on_press: self.on_arrow_down_press()
+
+                GridLayout:
+                    rows: 4
+                    size_hint_x: 0.22
+
+                    MyLabel:
+                        text: 'MEANING'
+                        size_hint_y: 0.25
+
+                    MyLabel:
+                        text: 'CATEGORIES'
+                        size_hint_y: 0.25
+
+                    MyLabel:
+                        text: 'URL'
+                        size_hint_y: 0.25
+
+                    MyLabel:
+                        text: 'DISAMBIGUATION'
+                        size_hint_y: 0.25
+
+                GridLayout:
+                    rows: 4
+                    size_hint_x: 0.42
+
+                    MyLabel:
+                        text: root.meaning
+                        size_hint_y: 0.25
+
+                    BoxLayout:
+                        size_hint_y: 0.25
+                        ScrollView:
+
+                            MyLabel:
+                                text: root.category
+                                size_hint_y: None
+                                text_size: self.width, None
+                                height: self.texture_size[1]
+
+                    MyLabel:
+                        text: root.url
+                        size_hint_y: 0.25
+
+                    MyLabel:
+                        text: root.dis
+                        size_hint_y: 0.25
+
+                IconButtonEdit:
+                    on_press: root.on_edit_press()
+                    size_hint_x: 0.07
+
+                IconButtonPlus:
+                    on_press: root.on_add_press()
+                    size_hint_x: 0.07
+
+                IconButtonDel:
+                    on_press: root.on_del_press()
+                    size_hint_x: 0.07
+
+
+
+
+

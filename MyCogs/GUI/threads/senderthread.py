@@ -1,0 +1,414 @@
+__author__ = 'matteo'
+
+import time
+from threading import Thread
+from collections import namedtuple
+from wikipedia.WikiConnector import WikiConnector
+
+from nltk import bigrams
+from nltk import trigrams
+
+from background.db.manager import Manager
+from background.mailengine.messageretriever import MessageRetriever
+from background.textprocessing.ngrams import NgramsFilter
+from background.textprocessing.postagger import PosTagger
+from background.textprocessing.filter import Filter
+from background.conceptnet5.conceptnet5 import ConceptNet5
+
+from kivy.app import App
+
+class SenderThread(Thread):
+
+    def __init__(self, group=None, target=None, name=None,
+                 args=(), kwargs=None, verbose=False):
+        Thread.__init__(self, group=group, target=target, name=name,
+                                  verbose=None)
+        self.args = args
+        self.kwargs = kwargs
+        self.verbose = verbose
+        self.mr = MessageRetriever()
+        self.postag = PosTagger(verbose=False)
+        self.filter = Filter(verbose=False)
+        self.ngram = NgramsFilter(verbose=False)
+        self.db = None
+        self.wiki = WikiConnector(verbose=False)
+        self.hashtable = {}
+        self.concepnet = ConceptNet5()
+
+        self.num_msg = 0
+
+        #retrieve the sender and user ID
+        self.app = App.get_running_app()
+        self.current = None
+
+        return
+
+    ###########################################################################################
+    ## RUN
+    ###########################################################################################
+
+    ''' corpus of the thread '''
+    def run(self):
+
+        popup = self.kwargs['parent']
+
+        #the new thread need a new connection to the DB
+        self.db = Manager(verbose=False)
+        self.current = self.app.root.children[0]
+
+        # cache data
+        self._ngram = []
+        self._chunks = []
+
+        #get the list of unparsed uids for that sender
+        unparsed = self.db.getsender_uids(userid=self.app.root.userID, id=self.app.root.senderID, isparsed=0)
+        self.num_msg = len(unparsed)
+
+        if self.num_msg is 0:
+            for x in range(101):
+                time.sleep(0.005)
+                self.app.root.pb_sender_value = x
+
+        if self.verbose:
+            print ('SENDER THREAD start')
+
+        #retrieve user email and pwd
+        access = self.db.getUserAccount(self.app.root.userID)
+
+        self.mr.connect()
+        if self.mr.login(access[0], access[1]):
+            self.mr.setFolder()
+
+            #elaborate messages
+            for index, x in enumerate(unparsed):
+
+                self.app.root.pb_sender_label = 'Processing message with UID: ' + str(x.uid) + " (" + str(index+1) + \
+                                                " of " + str(self.num_msg) + ")"
+                self.app.root.pb_sender_value = 0
+                raw_text = self.mr.getMessage(x.uid)
+
+                print ('text received, star processing')
+
+                # retrieve list of chunks and ngrams, the hashtable will be filled
+                self.get_chunks(raw_text)
+
+                self.app.root.pb_sender_label = 'Loading WikiUrl & Category...'
+                self.app.root.pb_sender_value = 0
+
+
+                self.dump_general()
+                # FILL knowledge table
+                #self.dump_knowledge()
+                print ('done update knowledge')
+
+                # FILL userdata table
+                #self.db.insert_ud(lambda: self.dump_userdata(x.uid))
+                print 'done update userdata'
+
+                #set the message as parsed
+                self.db.setparsed(uid=x.uid)
+
+        time.sleep(1)
+        popup.dismiss() #close the popup
+
+        return
+
+    ###########################################################################################
+    ## FUNCTION TO RETRIEVE CHUNK
+    ###########################################################################################
+
+    def get_chunks(self, raw_text):
+
+        """
+        function to retrieve CHUNKS & NGRAMS lists for a message
+        :param raw_text: body text of the email
+        :return:
+        """
+
+        self.hashtable = {}
+
+        sentences = self.postag.getSimpleTag(raw_text)
+        sentences_len = len(sentences)
+
+        if self.verbose:
+            print ('sentences in message: ', sentences_len)
+
+        for idx_sent, sent in enumerate(sentences):
+
+            n = self.filter.getChunkedTree(sent)
+            chunks = self.filter.traverse(n)
+            filtered = self.filter.filter_insignificant(chunks)
+            filtered = [[word for word, tag in np] for np in filtered]
+
+            for index, np in enumerate(filtered):
+
+                best = []
+
+                #TRIGRAM
+                if len(np) > 2:
+                    trigram = trigrams(np)
+                    _bothbigram = True
+                    _bothwords = True
+                    for ct in trigram:
+                        if not self.getmeaning(ct):
+                            bigram = bigrams(ct)
+
+                            for idx, cb in enumerate(bigram):
+
+                                if not _bothbigram and idx == 0:
+                                    continue
+                                if not self.getmeaning(cb):
+                                    for index, word in enumerate(cb):
+                                        if _bothwords == False and index == 0:
+                                            continue
+                                        self.getmeaning(word)
+
+                                _bothwords = False
+                            _bothbigram = False
+                            _bothwords = False
+
+                #BIGRAM
+                elif len(np) == 2:
+
+                    bigram = bigrams(np)
+                    for cb in bigram:
+
+                        if not self.getmeaning(cb):
+                            for word in cb:
+                                self.getmeaning(word)
+
+                #SINGLE WORD
+                else:
+
+                    for word in np:
+                        self.getmeaning(word)
+
+            self.app.root.pb_sender_value = (100 * (idx_sent + 1)) / sentences_len
+
+        if self.verbose:
+            print 'CHUCK EXTRACTED: ', self.hashtable
+
+        return
+
+    ###########################################################################################
+    ## FUNCTION MEANING RESEARCH
+    ###########################################################################################
+
+    def getmeaning(self, ngram):
+
+        """
+        function to retrieve the meaning of an ngram
+        :param ngram:
+        :return:
+        """
+
+        length = 1
+        phrase = ''
+        if isinstance(ngram, tuple):
+            phrase = ' '.join(ngram)
+            length = len(ngram)
+        else:
+            phrase = ngram
+
+        # check if present in hashtable
+        if phrase in self.hashtable.keys():
+            ## update the counter on the hashtable
+            self.hashtable[phrase] = [int(x) + 1 if idx == 0 else x for idx, x in enumerate(self.hashtable[phrase])]
+            return True
+
+        # check if present in DB knowledge
+        elif len(self.db.existchunk_kl(phrase)) > 0:
+
+            ## TODO possible other implementation without reading founded meaning
+            ## TODO but this will need an edit to the userdata dump
+            row = self.db.getfound_kl(phrase)
+            found = ['1']
+            for val in row:
+                found.append(val.found)
+            self.hashtable[phrase] = found
+            return True
+
+        # chunk not present in the DB neither in the HT
+        else:
+
+            ## query wikipedia to obtain meanings
+            best = []
+            if length > 1:
+                best = self.wiki.searchphrase(phrase)
+            else:
+                best = self.wiki.searchword(phrase)
+
+            if len(best) > 0:
+                best.insert(0, '1')
+                ## update hashtable
+                self.hashtable[phrase] = best
+                return True
+            else:
+                ## no meaning foundend
+                if len(ngram) is 1:
+                    # in case is a single word I need to fill in every case the hashtable
+                    self.hashtable[phrase] = ['1']
+                    return True
+                else:
+                    return False
+
+    ###########################################################################################
+
+    def dump_userdata(self, uid):
+
+        """
+        function used to fill the usertable
+        :param uid:
+        :return:
+        """
+
+        found = ''
+        status = 0
+
+        campi = ['userid', 'senderid', 'chunk', 'found', 'status', 'score']
+        row = namedtuple('userdata', campi)
+
+        for k, v in self.hashtable.iteritems():
+
+            if len(v) > 2:
+                ## AMBIGUOUS
+                found = 'ambiguous'
+                status = 0
+            elif len(v) == 2:
+                ## APPROVED
+                found = v[1] #the exact value
+                status = 1
+            else:
+                ## UNAPPROVED
+                found = '' #no meaning found
+                status = 2
+
+            yield row._make([self.app.root.userID,
+                             self.app.root.senderID,
+                             k.encode('ascii', 'ignore'),
+                             found.decode('utf-8', 'ignore'),
+                             status,
+                             int(v[0])])
+
+    def dump_knowledge(self):
+
+        """
+        function used to fill the knowledge table from the hashtable,
+        also it retrieve wikiurl from wikipedia and category from conceptnet
+        :return:
+        """
+        total = len(self.hashtable)
+        count = 0
+
+        #iterate new elements
+        for k, v in self.hashtable.iteritems():
+
+            # check if chunk already exists
+            exist = self.db.existchunk_kl(k)
+            count += 1
+
+            # NEW CHUNK
+            if len(exist) == 0:
+
+                #category retrieval
+                cat = self.concepnet.search(k)
+                print cat
+                if cat is None:
+                    cat = ''
+
+                ## TODO insert the data in the DB
+                self.db.insert_kl(lambda: self.insert_kl(cat=cat,
+                                                         chunk=k,
+                                                         founds=v[1:]))
+
+            self.app.root.pb_sender_value = (100 * (count)) / total
+
+
+    def insert_kl(self, cat, chunk, founds):
+        """
+        function used inside dump_knowledge to execute the insert for all meanings for that chunk
+        """
+
+        campi = ['chunk', 'found', 'category', 'url', 'disambiguation_url', 'ngram']
+        row = namedtuple('userdata', campi)
+
+        for found in founds:
+            url, dis = self.wiki.geturl(found)
+
+            yield row._make([chunk,
+                             found.encode('utf-8', errors='ignore'),
+                             cat,
+                             url,
+                             dis,
+                             len(chunk.split(' '))])
+
+
+    def dump_general(self):
+
+        total = len(self.hashtable)
+        count = 0
+
+        #iterate new elements
+        for k, v in self.hashtable.iteritems():
+
+            # check if chunk already exists
+            exist = self.db.existchunk_kl(k)
+            count += 1
+
+            ###########################################################
+            ## KL
+            ###########################################################
+
+            # NEW CHUNK
+            if len(exist) == 0:
+
+                ## add to KL
+                for found in v[1:]:
+                    url, dis = self.wiki.geturl(found)
+                    self.db.insert_kl_nocat(chunk=k, found=found.decode('utf-8', 'ignore'), url=url, dis=dis, ngram=len(k.split(' ')))
+
+                ## category retrieval
+                self.concepnet.search(k)
+
+
+            ###########################################################
+            ## UD
+            ###########################################################
+
+            if len(v) > 2:
+                ## AMBIGUOUS
+                found = 'ambiguous'
+                status = 0
+            elif len(v) == 2:
+                ## APPROVED
+                found = v[1] #the exact value
+                status = 1
+            else:
+                ## UNAPPROVED
+                found = '' #no meaning found
+                status = 2
+
+            self.db.insert_single_ud(userid=self.app.root.userID,
+                             senderid=self.app.root.senderID,
+                             chunk=k.encode('ascii', 'ignore'),
+                             found=found.decode('utf-8', 'ignore'),
+                             status=status,
+                             score=int(v[0]))
+
+            ###########################################################
+
+            self.app.root.pb_sender_value = (100 * count) / total
+
+
+
+
+
+
+
+
+
+
+
+
+
+

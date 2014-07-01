@@ -1,0 +1,43 @@
+#SenderList:
+
+<MyButtonUnicolor>:
+
+    size_hint_y: None
+    height: 120
+
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+
+        ColorDownButton:
+            size_hint_y: None
+            height: 113
+            size_hint_x: 0.95
+            font_size: '26dp'
+            markup: True
+            shorten: True
+
+<MyColorDownButton>:
+
+    size_hint_y: None
+    height: 113
+    size_hint_x: 0.95
+    font_size: '26dp'
+    markup: True
+    shorten: True
+
+
+<SenderList>:
+    mylayout: mylayout
+
+    canvas.before:
+        Color:
+            rgba: 0.13, 0.14, 0.15, 1
+        Rectangle:
+            # self here refers to the widget i.e FloatLayout
+            pos: self.pos
+            size: self.size
+
+    orientation: 'vertical'
+    id: mylayout
+    spacing: 5

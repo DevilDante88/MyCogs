@@ -1,0 +1,183 @@
+<MyLabelEdit>:
+    size_hint_x: 0.25
+    size_hint_y: None
+    height: 50
+
+<EditSlide>:
+
+    orientation: 'vertical'
+    canvas.before:
+        Color:
+            rgba: 0.13, 0.14, 0.15, 1
+        Rectangle:
+            # self here refers to the widget i.e FloatLayout
+            pos: self.pos
+            size: self.size
+
+    layout_kl: layout_kl
+    layout_meaning: layout_meaning
+    layout_chunk: layout_chunk
+    dis_yes: dis_yes
+    dis_no: dis_no
+    approved: approved
+    unapproved: unapproved
+    undefined: undefined
+    btn_close: btn_close
+    btn_save: btn_save
+
+    category: category
+    score: score
+    chunk: chunk
+    wikiurl: wikiurl
+
+
+    GridLayout:
+        cols: 2
+        size_hint_y: None
+        height: 55
+        spacing: 3
+        padding: 0,5,5,3
+
+        MyLabelEdit:
+            id: 'chunk_label'
+            text: 'Original'
+
+        BoxLayoutH50:
+            id: layout_chunk
+            spacing: 3
+
+            TextInputH50:
+                id: chunk
+
+    BoxLayout:
+        orientation: 'vertical'
+        id: layout_meaning
+
+    GridLayout:
+        id: layout_kl
+        cols: 2
+        size_hint_y: None
+        height: 224
+        spacing: 3
+        padding: 0,5,5,3
+
+        MyLabelEdit:
+            text: 'Categories'
+
+        TextInputH50:
+            id: category
+
+        MyLabelEdit:
+            text: 'Wikipedia URL'
+
+        TextInputH50:
+            id: wikiurl
+
+        MyLabelEdit:
+            text: 'Disambiguation?'
+
+        BoxLayoutH50:
+            spacing: 5
+
+            ColorDownToggleButtonH50:
+                size_hint_x: 0.25
+                id: dis_yes
+                text: '[b]YES[/b]'
+                markup: True
+                group: 'dis'
+
+            ColorDownToggleButtonH50:
+                size_hint_x: 0.25
+                id: dis_no
+                text: '[b]NO[/b]'
+                markup: True
+                group: 'dis'
+
+            MyLabelEdit:
+                text: 'Score'
+
+            TextInputH50:
+                size_hint_x: 0.15
+                id: score
+
+        MyLabelEdit:
+            text: 'Table'
+
+        BoxLayoutH50:
+            spacing: 5
+
+            ColorDownToggleButtonH50:
+                id: approved
+                text: '[b]Approved[/b]'
+                markup: True
+                group: 'table'
+
+            ColorDownToggleButtonH50:
+                id: unapproved
+                text: '[b]Unapproved[/b]'
+                markup: True
+                group: 'table'
+
+            ColorDownToggleButtonH50:
+                id: undefined
+                text: '[b]Ambiguous[/b]'
+                markup: True
+                group: 'table'
+
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint_y: None
+        height: 105
+        spacing: 3
+        padding: 5,5,5,5
+
+        ColorDownButtonH50:
+            text: '[b]UPDATE[/b]'
+            markup: True
+            id: btn_save
+            on_press: root.update()
+
+        ColorDownButtonH50:
+            text: '[b]BACK[/b]'
+            markup: True
+            id: btn_close
+            on_press: app.root.carousel.load_slide(app.root.approved)
+
+<SplitPopup>:
+
+    size_hint: .7, .7
+    auto_dismiss: False
+    title: 'Splitting phrase...'
+
+    split_layout: split_layout
+
+    BoxLayout:
+        orientation: 'vertical'
+
+        BoxLayout:
+            id: split_layout
+
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_y: None
+            height: 105
+            spacing: 3
+            padding: 5,5,5,5
+
+            ColorDownButtonH50:
+                text: '[b]SPLIT![/b]'
+                markup: True
+                id: btn_split
+                on_press: root.split()
+
+            ColorDownButtonH50:
+                text: '[b]BACK[/b]'
+                markup: True
+                on_press: root.dismiss()
+
+
+
+
+
+
+

@@ -1,0 +1,60 @@
+<AddSlide>:
+
+    ti_chunk: ti_chunk
+    search_btn: search_btn
+
+    orientation: 'vertical'
+
+    canvas.before:
+        Color:
+            rgba: 0.13, 0.14, 0.15, 1
+        Rectangle:
+            # self here refers to the widget i.e FloatLayout
+            pos: self.pos
+            size: self.size
+
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'bottom'
+
+        BoxLayout:
+            orientation: 'vertical'
+            padding: 50
+            spacing: 20
+
+            TextInput:
+                id: ti_chunk
+                hint_text: 'Insert new chunk'
+                text: ''
+                size_hint: 1, None
+                height: 60
+                multiline: False
+                padding: [5, ( self.height - self.line_height ) / 2]
+
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'top'
+
+        BoxLayout:
+            orientation: 'vertical'
+            padding: 50, 0, 50, 0
+            #spacing: 20
+            size_hint_y: 0.2
+
+            ColorDownButton:
+                id: search_btn
+                text: "[b]SEARCH[/b]"
+                markup: True
+
+
+
+
+
+
+
+
+
+
+
+
+

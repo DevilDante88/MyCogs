@@ -1,0 +1,57 @@
+#Login:
+
+<Login>:
+
+    canvas.before:
+        Color:
+            rgba: 0.13, 0.14, 0.15, 1
+        Rectangle:
+            # self here refers to the widget i.e FloatLayout
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 5
+
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'bottom'
+
+            BoxLayout:
+                orientation: 'vertical'
+                padding: 50
+                spacing: 20
+                TextInput:
+                    id: email
+                    hint_text: 'Email'
+                    text: 'mycog.jimspohrer@gmail.com'
+                    size_hint: 1, 0.5
+                    multiline: False
+                    padding: [5, ( self.height - self.line_height ) / 2]
+                TextInput:
+                    id: pwd
+                    hint_text: 'Password'
+                    text: 'MyCog.matteo.renzi.88'
+                    size_hint: 1, 0.5
+                    multiline: False
+                    password: True
+                    padding: [5, ( self.height - self.line_height ) / 2]
+
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'top'
+
+            BoxLayout:
+                orientation: 'vertical'
+                padding: 50, 0, 50, 0
+                spacing: 20
+                size_hint_y: 0.2
+
+                ColorDownButton:
+                    #size_hint: 1, 0.2
+                    id: login
+                    text: "[b]LOGIN[/b]"
+                    markup: True
+                    on_press: root.check_install()

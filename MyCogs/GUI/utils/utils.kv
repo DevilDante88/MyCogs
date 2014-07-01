@@ -1,0 +1,58 @@
+<CheckBox>:
+    canvas.before:
+        Color:
+            rgba: 0.07, 0.074, 0.078, 0.9
+        Rectangle:
+            size: 32, 32
+            pos: int(self.center_x - 16), int(self.center_y - 16)
+
+<ColorDownButtonH50>:
+    size_hint_y: None
+    height: 50
+
+<ColorDownToggleButtonH50>:
+    size_hint_y: None
+    height: 50
+
+<BoxLayoutH50>:
+    orientation: 'horizontal'
+    size_hint_y: None
+    height: 50
+
+<GridLayout1Scroll>:
+    cols: 1
+    size_hint_y: None
+    height: self.minimum_height
+
+<GridLayout1>:
+    cols: 1
+
+<TextInputH50>:
+    size_hint_y: None
+    height: 50
+    multiline: False
+    padding: [5, ( self.height - self.line_height ) / 2]
+
+<LabelH50>:
+    size_hint_y: None
+    height: 50
+
+<CheckBoxH50>:
+    size_hint_y: None
+    height: 50
+
+<ToggleButtonH50>:
+    size_hint_y: None
+    height: 50
+
+<IconButtonEdit>
+    source: 'data/img/icon_edit.png'
+
+<IconButtonPlus>
+    source: 'data/img/icon_plus.png'
+
+<IconButtonDel>
+    source: 'data/img/icon_del.png'
+
+<IconButtonOk>
+    source: 'data/img/icon_ok_white.png'
