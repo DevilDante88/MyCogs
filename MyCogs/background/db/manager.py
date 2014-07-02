@@ -137,73 +137,6 @@ class Manager(Connector):
         return self.execSql(SQL_UPDATE, dict(uid=uid))
 
     ##################################################################################################
-    ## CHUNKS TABLE
-    ##################################################################################################
-
-    def updateDB1(self, function):
-
-        SQL_INSERT = """
-            INSERT OR IGNORE INTO chunks
-                (id_user,id_sender,original,founded,status,score,ngram,uid)
-            VALUES
-                (:id_user,:id_sender,:original,:founded,:status,:score,:ngram,:uid)
-            """
-
-        cur = self.con.cursor()
-        cur.executemany(SQL_INSERT, function())
-        self.con.commit()
-
-    def updateDB2(self, function):
-
-        SQL_UPDATE = """UPDATE chunks
-                        CASE WHEN SET score = score + :score
-                            AND uid = uid + ', ' + :uid
-                        WHERE id_user=:id_user
-                            AND id_sender=:id_sender
-                            AND original=:original"""
-
-        cur = self.con.cursor()
-        cur.executemany(SQL_UPDATE, function())
-        self.con.commit()
-
-    def getchunkUID(self, id_user, id_sender, original):
-
-        return self.selectSql("SELECT uid FROM chunks WHERE id_user=:id_user AND id_sender=:id_sender AND original=:original",
-                              dict(id_user=id_user, id_sender=id_sender, original=original))
-
-    def updateDBtest(self, id_user, id_sender, score):
-
-        SQL_UPDATE = "UPDATE chunks SET score=:score WHERE id_user=:id_user AND id_sender=:id_sender"
-        cur = self.con.cursor()
-        cur.execute(SQL_UPDATE, dict(id_user=id_user, id_sender=id_sender, score=score))
-        self.con.commit()
-
-    def updateRowTotal(self, id_user, id_sender, original, founded, status, score, ngram , uid):
-
-        SQL_UPDATE = """UPDATE chunks
-                     SET score=:score
-                     WHERE id_user=:id_user
-                     AND id_sender=:id_sender
-                     AND original=:original"""
-
-        cur = self.con.cursor()
-        cur.execute(SQL_UPDATE, dict(id_user=id_user, id_sender=id_sender, original=original,
-                          founded=founded, status=status, score=score, ngram=ngram, uid=uid))
-        self.con.commit()
-
-    ''' retrieve a row for that label '''
-    def getallchunk(self, id_user, id_sender):
-
-        return self.selectSql("SELECT * FROM chunks WHERE id_user=:id_user AND id_sender=:id_sender",
-                                  dict(id_user=id_user, id_sender=id_sender))
-
-    ''' get all rows of a particural status (Approved, Unapproved, Undefined) '''
-    def getStatus(self, status):
-
-        return self.con.selectSql("SELECT * FROM chunks WHERE status=:status", dict(status=status))
-
-
-    ##################################################################################################
     ## KNOWLEDGE
     ##################################################################################################
 
@@ -230,7 +163,7 @@ class Manager(Connector):
             """
 
         return self.execSql(SQL_INSERT, dict(chunk=chunk,
-                                             found=unicode(found, errors='ignore'),
+                                             found=found,
                                              category=category,
                                              url=url,
                                              disambiguation_url=dis,
@@ -281,6 +214,8 @@ class Manager(Connector):
     def update_cat(self, chunk, cat):
 
         QUERY = "UPDATE knowledge SET category=:category WHERE chunk=:chunk"
+        #chunk = chunk.decode('utf-8', errors='ignore')
+        cat = cat.decode('utf-8', errors='ignore')
         return self.execSql(QUERY, dict(chunk=chunk, category=cat))
 
 
@@ -318,6 +253,13 @@ class Manager(Connector):
                 "chunk=:chunk AND userid=:userid AND senderid=:senderid"
         chunk = chunk.decode('utf-8', errors='ignore')
         return self.execSql(QUERY, dict(userid=userid, senderid=senderid, score=score, chunk=chunk))
+
+    def update_ud(self, userid, senderid, chunk, found, status, score):
+        QUERY = "UPDATE userdata SET chunk=:chunk, found=:found, status=:status, score=:score WHERE " \
+                "chunk=:chunk AND userid=:userid AND senderid=:senderid"
+        chunk = chunk.decode('utf-8', errors='ignore')
+        return self.execSql(QUERY, dict(userid=userid, senderid=senderid, chunk=chunk,
+                                        found=found, status=status, score=score))
 
     def insert_ud(self, function):
 

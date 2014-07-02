@@ -1,5 +1,7 @@
 __author__ = 'matteo'
 
+import re
+
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.anchorlayout import AnchorLayout
 from kivy.uix.gridlayout import GridLayout
@@ -15,8 +17,10 @@ from kivy.uix.popup import Popup
 
 from background.db.manager import Manager
 from GUI.utils.utils import (IconButtonOk, IconButtonPlus, IconButtonDel, ColorDownToggleButtonH50,
-                             BoxLayoutH50, ToggleButtonH50,
+                             BoxLayoutH50, IconButtonRefresh,
                              ColorDownButtonH50, TextInputH50, LabelH50, CheckBoxH50)
+from wikipedia.WikiConnector import WikiConnector
+from background.conceptnet5.conceptnet5 import ConceptNet5
 
 Builder.load_file('GUI/edit/editslide.kv')
 
@@ -34,8 +38,6 @@ class EditSlide(BoxLayout):
     layout_chunk = ObjectProperty()
     layout_meaning = ObjectProperty()
     selected = ObjectProperty()
-    dis_yes = ObjectProperty()
-    dis_no = ObjectProperty()
     approved = ObjectProperty()
     unapproved = ObjectProperty()
     undefined = ObjectProperty()
@@ -43,7 +45,6 @@ class EditSlide(BoxLayout):
     chunk = ObjectProperty()  #chunk
     meaning = ListProperty([])  #found meaning
     category = ObjectProperty()
-    wikiurl = ObjectProperty()
     score = ObjectProperty()
 
     def __init__(self, verbose=False, **kwargs):
@@ -57,9 +58,12 @@ class EditSlide(BoxLayout):
         self.popupedit = self
         self.rows_ud = None
         self.rows_kl = None
+        self.meaning = []
         self.found_numb = 0
         self.counter = 0
         self.btn_split = None
+        self.wiki = WikiConnector()
+        self.conceptnet = ConceptNet5()
 
     def fill_data(self):
 
@@ -77,17 +81,17 @@ class EditSlide(BoxLayout):
         self.rows_ud = self.db.getchunk_ud(self.app.root.current_chunk, self.app.root.userID, self.app.root.senderID)
         self.rows_kl = self.db.getchunk_kl(self.app.root.current_chunk)
 
-        print 'rows_ud: ', self.rows_ud
-        print 'rows_kl: ', self.rows_kl
-
         #check if it is a ngram and if so add split button
         if int(self.rows_kl[0].ngram) > 1:
             self.btn_split = ColorDownButtonH50(id='split', text="[b]SPLIT[/b]", markup=True, size_hint_x=0.25, on_press=self.split)
             self.layout_chunk.add_widget(self.btn_split)
 
-        #insert list of possible meaning
+        #insert list of possible meaning/url
         for idx, row in enumerate(self.rows_kl):
-            self.add_meaning_full(row.found)
+            self.add_meaning_full(row)
+
+        #set by default the first meaning True
+        self.grid_row.children[0].children[0].active = True
 
         self.addmore = IconButtonPlus(id='addmore', spacing=20, size_hint_y=None, height=50)
         self.addmore.bind(on_press=self.add_meaning_empty)
@@ -96,17 +100,8 @@ class EditSlide(BoxLayout):
         #set categories
         self.category.text = self.rows_kl[0].category
 
-        #set url
-        self.wikiurl.text = self.rows_kl[0].url
-
         #set score
         self.score.text = str(self.rows_ud[0].score)
-
-        #insert disambiguation status
-        if self.rows_kl[0].disambiguation_url == 1:
-            self.dis_yes.state = 'down'
-        else:
-            self.dis_no.state = 'down'
 
         #set table radio button
         if self.rows_ud[0].status == 0:
@@ -127,38 +122,50 @@ class EditSlide(BoxLayout):
 
         self.found_numb += 1
         self.counter += 1
-        bl = BoxLayoutH50(id='bl'+str(self.found_numb), spacing=5)
-        bl.add_widget(LabelH50(text='Founded '+str(self.found_numb), size_hint_x=0.2))
-        bl.add_widget(TextInputH50(id='found'+str(self.found_numb), text='', size_hint_x=0.6))
-        btn_chosen = ColorDownToggleButtonH50(id='toggle'+str(self.found_numb), text='[b]CHOSEN[/b]',
-                                                  markup=True, group='found', size_hint_x=0.15)
-        bl.add_widget(btn_chosen)
+        bl = BoxLayoutH50(id='bl'+str(self.found_numb))
         al = AnchorLayout(anchor_x='center', anchor_y='center', size_hint_x=0.05, size_hint_y=None, height=50)
         al.add_widget(IconButtonDel(id='btn'+str(self.found_numb), on_press=self.remove_line))
         bl.add_widget(al)
+        al2 = AnchorLayout(anchor_x='center', anchor_y='center', size_hint_x=0.05, size_hint_y=None, height=50)
+        btn_ref = IconButtonRefresh(id='btn_ref'+str(self.found_numb))
+        btn_ref.bind(on_press=self.update_wiki)
+        al2.add_widget(btn_ref)
+        bl.add_widget(al2)
+        bl.add_widget(TextInputH50(id='found'+str(self.found_numb), text='', size_hint_x=0.25))
+        bl.add_widget(TextInputH50(id='url'+str(self.found_numb), text='', size_hint_x=0.3))
+        bl.add_widget(CheckBoxH50(id='dis'+str(self.found_numb), size_hint_x=0.15))
+        bl.add_widget(CheckBoxH50(id='approved'+str(self.found_numb), size_hint_x=0.1))
+        bl.add_widget(CheckBoxH50(id='chosen'+str(self.found_numb), group='chosen', size_hint_x=0.1))
         self.grid_row.add_widget(bl)
         self.grid_row.add_widget(self.addmore)
 
-    def add_meaning_full(self, found):
+    def add_meaning_full(self, row):
 
         """
         Add a meaning row on the GUI to let the user add his own meaning
         :param instance:
         :return:
         """
+
         self.found_numb += 1
         self.counter += 1
-        bl = BoxLayoutH50(id='bl'+str(self.found_numb), spacing=5)
-        bl.add_widget(LabelH50(text='Founded '+str(self.found_numb), size_hint_x=0.2))
-        bl.add_widget(TextInputH50(id='found'+str(self.found_numb), text=found, size_hint_x=0.6))
-        btn_chosen = ColorDownToggleButtonH50(id='toggle'+str(self.found_numb), text='[b]CHOSEN[/b]',
-                                                  markup=True, group='found', size_hint_x=0.15)
-        if found == self.rows_ud[0].found:
-                btn_chosen.state = 'down'
-        bl.add_widget(btn_chosen)
+        bl = BoxLayoutH50(id='bl'+str(self.found_numb))
         al = AnchorLayout(anchor_x='center', anchor_y='center', size_hint_x=0.05, size_hint_y=None, height=50)
         al.add_widget(IconButtonDel(id='btn'+str(self.found_numb), on_press=self.remove_line))
         bl.add_widget(al)
+        al2 = AnchorLayout(anchor_x='center', anchor_y='center', size_hint_x=0.05, size_hint_y=None, height=50)
+        btn_ref = IconButtonRefresh(id='btn_ref'+str(self.found_numb))
+        btn_ref.bind(on_press=self.update_wiki)
+        al2.add_widget(btn_ref)
+        bl.add_widget(al2)
+        bl.add_widget(TextInputH50(id='found', text=row.found, size_hint_x=0.25))
+        bl.add_widget(TextInputH50(id='url'+str(self.found_numb), text=row.url, size_hint_x=0.3))
+        if row.disambiguation_url == 1:
+            bl.add_widget(CheckBoxH50(id='dis'+str(self.found_numb), size_hint_x=0.15, active=True))
+        else:
+            bl.add_widget(CheckBoxH50(id='dis'+str(self.found_numb), size_hint_x=0.15))
+        bl.add_widget(CheckBoxH50(id='approved'+str(self.found_numb), size_hint_x=0.1, active=True))
+        bl.add_widget(CheckBoxH50(id='chosen'+str(self.found_numb), group='chosen', size_hint_x=0.1))
         self.grid_row.add_widget(bl)
 
     def remove_line(self, instance):
@@ -170,6 +177,34 @@ class EditSlide(BoxLayout):
         """
         self.counter -= 1
         self.grid_row.remove_widget(instance.parent.parent)
+
+    def update_wiki(self, instance):
+
+        """
+        function to automatically update the wikipedia url from the corresponding founded meaning
+        :param instance:
+        :return:
+        """
+        print 'update wiki'
+        chunk = instance.parent.parent.children[4].text
+        if chunk == '':
+            return
+        url, dis = self.wiki.geturl(chunk.lower())
+        instance.parent.parent.children[3].text = url
+        if dis == 1:
+            instance.parent.parent.children[2].active = True
+        else:
+            instance.parent.parent.children[2].active = False
+
+    def update_cat(self):
+
+        """
+        function to automatically update the category from the original chunk
+        :return:
+        """
+        print 'update category'
+        print 'chunk: ', self.chunk.text
+        self.conceptnet.search_edit(self.chunk.text)
 
     def split(self, instance):
         """
@@ -196,7 +231,6 @@ class EditSlide(BoxLayout):
         callback function after save changes button pressed. Store the new data in the DB
         :return: void
         """
-
         ##########################################################
         ## INPUT CHECK
         ##########################################################
@@ -219,21 +253,35 @@ class EditSlide(BoxLayout):
         chosen_mean = ''
         for bl in self.layout_meaning.children:
 
-            print bl.children
             for idx, elem in enumerate(bl.children):
                 if idx == 0:
-                    continue
-                #parse all meanings inserted
-                mean = elem.children[2].text
-                chosen = elem.children[1].state
+                    continue    #the first children is the ADD new button
+                #parse all rows
+                mean = elem.children[4].text
+                url = elem.children[3].text
+                dis = elem.children[2].active
+                approved = elem.children[1].active
+                chosen = elem.children[0].active
+
                 if mean == '':
                     popup = Popup(title='Alert!!', content=Label(text="Empty meaning not allowed!"),
                               size_hint=(None, None), size=(400, 200))
                     popup.open()
                     return
-                if chosen == 'down':
-                    chosen_mean = mean
-                self.meaning.append(mean)
+
+                self.meaning.append(dict(found=mean, url=url, dis=dis, approved=approved, chosen=chosen))
+
+        ## check at least 1 approved
+        count_approved = 0
+        for x in self.meaning:
+            print x
+            if x['approved'] is True:
+                count_approved += 1
+        if count_approved == 0:
+            popup = Popup(title='Alert!!', content=Label(text="At least insert one approved meaning!"),
+                              size_hint=(None, None), size=(400, 200))
+            popup.open()
+            return
 
         chosen_table = 0
         l = ToggleButtonBehavior.get_widgets('table')
@@ -245,23 +293,10 @@ class EditSlide(BoxLayout):
                     chosen_table = 2
         del l
 
-        dis = 0
-        l = ToggleButtonBehavior.get_widgets('dis')
-        for toggle in l:
-            if toggle.state == 'down':
-                if toggle.text == '[b]YES[/b]':
-                    dis = 1
-                elif toggle.text == '[b]NO[/b]':
-                    dis = 0
-        del l
-
         print 'chunk: ', self.chunk.text
-        print 'meaning: ', self.meaning
-        print 'chosen_mean: ', chosen_mean
-        print 'wikiurl: ', self.wikiurl.text
+        print 'rows: ', self.meaning
         print 'category: ', self.category.text
         print 'chosen table: ', chosen_table
-        print 'disambiguation: ', dis
         print 'score: ', self.score.text
         print 'old_chunk: ', self.app.root.current_chunk
         print 'old_found: ', self.rows_kl
@@ -278,17 +313,23 @@ class EditSlide(BoxLayout):
         self.db.del_chunk_ud(userid=self.app.root.userID, senderid=self.app.root.senderID, chunk=self.rows_ud[0].chunk)
 
         ##insert section
-        for x in self.meaning:
+        for row in self.meaning:
+            print row
+            if row['approved']:
 
-            if x == chosen_mean:
+                print 'pre inserimento DB KL'
 
-                self.db.insert_single_ud(
-                    userid=self.app.root.userID, senderid=self.app.root.senderID, chunk=self.chunk.text,
-                    found=x, score=int(self.score.text), status=chosen_table)
+                self.db.insert_single_kl(chunk=self.chunk.text, found=row['found'],
+                                     category=self.category.text, url=row['url'],
+                                     dis=row['dis'], ngram=len(self.chunk.text.split(" ")))
 
-            self.db.insert_single_kl(chunk=self.chunk.text, found=x,
-                                     category=self.category.text, url=self.wikiurl.text,
-                                     dis=dis, ngram=len(self.chunk.text.split(" ")))
+                if row['chosen']:
+
+                    print 'pre inserimento DB UD'
+
+                    self.db.insert_single_ud(
+                        userid=self.app.root.userID, senderid=self.app.root.senderID, chunk=self.chunk.text,
+                        found=row['found'], score=int(self.score.text), status=chosen_table)
 
         ##########################################################
         ## END

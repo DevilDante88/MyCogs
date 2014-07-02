@@ -1,6 +1,5 @@
 __author__ = 'matteo'
 
-from kivy.network.urlrequest import UrlRequest
 import os.path
 import nltk
 
@@ -15,7 +14,6 @@ from kivy.app import App
 from kivy.lang import Builder
 
 Builder.load_file('GUI/login/login.kv')
-
 
 class Login(BoxLayout):
 

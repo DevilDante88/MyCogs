@@ -124,80 +124,14 @@ class Initializer:
                     SELECT RAISE(IGNORE);
                  END""")
 
-            '''cur.execute("""CREATE TRIGGER t2
-                 BEFORE INSERT ON userdata
-                 WHEN NEW.chunk IN (SELECT chunk FROM knowledge)
-                 BEGIN
-                    CASE
-                        WHEN (SELECT COUNT(chunk) AS numchunks FROM knowledge WHERE NEW.chunk = chunk) = 1
-                        THEN
-                            (CASE
-                                WHEN (SELECT url FROM userdata WHERE NEW.chunk = chunk LIMIT 1) = ''
-                                    THEN NEW.status = 2
-                                WHEN (SELECT found FROM userdata WHERE NEW.chunk = chunk LIMIT 1) = ''
-                                    THEN NEW.status = 2
-                                ELSE
-                                    NEW.status = 1
-                            END;
-                            )
-                        ELSE
-                            (NEW.found = 'ambiguous' AND NEW.status = 0)
-                    END;
-                 END;""")'''
-
-
             '''cur.execute("""CREATE TRIGGER t3
-                AFTER INSERT ON userdata FOR EACH ROW
-                WHEN (SELECT COUNT(chunk) AS numchunks FROM knowledge WHERE NEW.chunk = chunk) = 1
-                BEGIN
-                    UPDATE userdata
-                    SET status = CASE
-
-                        WHEN (SELECT url FROM knowledge WHERE chunk = NEW.chunk LIMIT 1) = ''
-                            THEN status = 2
-                        WHEN (SELECT found FROM knowledge WHERE NEW.chunk = chunk LIMIT 1) = ''
-                            THEN status = 2
-                        ELSE
-                            status = 1
-                        END
-                    WHERE chunk = NEW.chunk;
-                 END""")'''
-
-            '''cur.execute("""CREATE TRIGGER t3
-                AFTER INSERT ON userdata FOR EACH ROW
-                WHEN (SELECT COUNT(chunk) AS numchunks FROM knowledge WHERE NEW.chunk = chunk) = 1
-                BEGIN
-                    UPDATE userdata
-                    SET status = (CASE
-
-                        WHEN (SELECT url FROM knowledge WHERE chunk = NEW.chunk LIMIT 1) = ''
-                            THEN status = 2
-                        WHEN (SELECT found FROM knowledge WHERE NEW.chunk = chunk LIMIT 1) = ''
-                            THEN status = 2
-                        ELSE
-                            status = 1
-                    END),
-                    found = (CASE
-
-                        WHEN (SELECT url FROM knowledge WHERE chunk = NEW.chunk LIMIT 1) = ''
-                            THEN found=''
-                        WHEN (SELECT found FROM knowledge WHERE NEW.chunk = chunk LIMIT 1) = ''
-                            THEN found=''
-                        ELSE
-                            found=(SELECT found FROM knowledge WHERE NEW.chunk = chunk LIMIT 1)
-
-                    END)
-                    WHERE chunk = NEW.chunk;
-                 END""")'''
-
-            cur.execute("""CREATE TRIGGER t3
                 AFTER INSERT ON userdata FOR EACH ROW
                 WHEN (SELECT url FROM knowledge WHERE chunk = NEW.chunk LIMIT 1) = ''
                 BEGIN
                     UPDATE userdata
                     SET status = 2
                     WHERE chunk = NEW.chunk;
-                END""")
+                END""")'''
 
             '''cur.execute("""CREATE TRIGGER t4
                 AFTER INSERT ON userdata FOR EACH ROW

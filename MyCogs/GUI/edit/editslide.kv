@@ -17,8 +17,6 @@
     layout_kl: layout_kl
     layout_meaning: layout_meaning
     layout_chunk: layout_chunk
-    dis_yes: dis_yes
-    dis_no: dis_no
     approved: approved
     unapproved: unapproved
     undefined: undefined
@@ -28,11 +26,9 @@
     category: category
     score: score
     chunk: chunk
-    wikiurl: wikiurl
-
 
     GridLayout:
-        cols: 2
+        cols: 4
         size_hint_y: None
         height: 55
         spacing: 3
@@ -49,6 +45,35 @@
             TextInputH50:
                 id: chunk
 
+        MyLabelEdit:
+            text: 'Score'
+
+        TextInputH50:
+            size_hint_x: 0.15
+            id: score
+
+    BoxLayoutH50:
+
+        Label:
+            text: 'Found meaning'
+            size_hint_x: 0.3
+
+        Label:
+            text: 'Url'
+            size_hint_x: 0.35
+
+        Label:
+            text: 'Disambiguation'
+            size_hint_x: 0.15
+
+        Label:
+            text: 'Approved'
+            size_hint_x: 0.1
+
+        Label:
+            text: 'Chosen'
+            size_hint_x: 0.1
+
     BoxLayout:
         orientation: 'vertical'
         id: layout_meaning
@@ -57,48 +82,22 @@
         id: layout_kl
         cols: 2
         size_hint_y: None
-        height: 224
+        height: 122
         spacing: 3
         padding: 0,5,5,3
 
         MyLabelEdit:
             text: 'Categories'
 
-        TextInputH50:
-            id: category
-
-        MyLabelEdit:
-            text: 'Wikipedia URL'
-
-        TextInputH50:
-            id: wikiurl
-
-        MyLabelEdit:
-            text: 'Disambiguation?'
-
         BoxLayoutH50:
             spacing: 5
 
-            ColorDownToggleButtonH50:
-                size_hint_x: 0.25
-                id: dis_yes
-                text: '[b]YES[/b]'
-                markup: True
-                group: 'dis'
-
-            ColorDownToggleButtonH50:
-                size_hint_x: 0.25
-                id: dis_no
-                text: '[b]NO[/b]'
-                markup: True
-                group: 'dis'
-
-            MyLabelEdit:
-                text: 'Score'
-
             TextInputH50:
-                size_hint_x: 0.15
-                id: score
+                id: category
+
+            IconButtonRefresh:
+                on_press: root.update_cat()
+                size_hint_x: 0.1
 
         MyLabelEdit:
             text: 'Table'

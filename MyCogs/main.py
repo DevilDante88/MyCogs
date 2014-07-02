@@ -1,19 +1,18 @@
 __author__ = 'matteo'
-__version__ = “1.0.3”
 
 from kivy.app import App
 from kivy.uix.settings import SettingsWithSidebar
 from kivy.uix.boxlayout import BoxLayout
 from kivy.properties import (ObjectProperty, NumericProperty, StringProperty)
 
-from GUI.login.login import Login
-from GUI.senderlist.senderlist import SenderList
-from GUI.approved.approved import Approved
-from GUI.unapproved.unapproved import Unapproved
-from GUI.undefined.undefined import Undefined
-from GUI.add.addslide import AddSlide
-from GUI.add.foundslide import FoundSlide
-from GUI.edit.editslide import EditSlide
+from GUI.login import login
+from GUI.senderlist import senderlist
+from GUI.approved import approved
+from GUI.unapproved import unapproved
+from GUI.undefined import undefined
+from GUI.add import addslide
+from GUI.add import foundslide
+from GUI.edit import editslide
 
 from background.db.initializer import Initializer
 from background.db.connector import Connector
@@ -94,10 +93,12 @@ class MyCogsRoot(BoxLayout):
         elif value.id == 'editslide':
             value.fill_data()
 
-    ''' callback function for menu button, deal the particular case when no sender has been selected
-        disable button in sender is not selected
-    '''
     def menu_callback(self, instance):
+
+        '''
+        callback function for menu button, deal the particular case when no sender has been selected
+        disable button in sender is not selected
+        '''
 
         if instance.id == "approved":
             if self.app.root.senderID is 0:

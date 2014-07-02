@@ -1,7 +1,6 @@
 __author__ = 'matteo'
 
 from background.mailengine.connector import Connector
-import mmap
 from StringIO import StringIO
 
 '''

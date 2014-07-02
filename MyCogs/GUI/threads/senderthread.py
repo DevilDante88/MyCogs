@@ -2,7 +2,6 @@ __author__ = 'matteo'
 
 import time
 from threading import Thread
-from collections import namedtuple
 from wikipedia.WikiConnector import WikiConnector
 
 from nltk import bigrams
@@ -159,7 +158,7 @@ class SenderThread(Thread):
                                     continue
                                 if not self.getmeaning(cb):
                                     for index, word in enumerate(cb):
-                                        if _bothwords == False and index == 0:
+                                        if _bothwords is False and index == 0:
                                             continue
                                         self.getmeaning(word)
 
@@ -219,8 +218,6 @@ class SenderThread(Thread):
         # check if present in DB knowledge
         elif len(self.db.existchunk_kl(phrase)) > 0:
 
-            ## TODO possible other implementation without reading founded meaning
-            ## TODO but this will need an edit to the userdata dump
             row = self.db.getfound_kl(phrase)
             found = ['1']
             for val in row:
@@ -254,97 +251,15 @@ class SenderThread(Thread):
 
     ###########################################################################################
 
-    def dump_userdata(self, uid):
-
-        """
-        function used to fill the usertable
-        :param uid:
-        :return:
-        """
-
-        found = ''
-        status = 0
-
-        campi = ['userid', 'senderid', 'chunk', 'found', 'status', 'score']
-        row = namedtuple('userdata', campi)
-
-        for k, v in self.hashtable.iteritems():
-
-            if len(v) > 2:
-                ## AMBIGUOUS
-                found = 'ambiguous'
-                status = 0
-            elif len(v) == 2:
-                ## APPROVED
-                found = v[1] #the exact value
-                status = 1
-            else:
-                ## UNAPPROVED
-                found = '' #no meaning found
-                status = 2
-
-            yield row._make([self.app.root.userID,
-                             self.app.root.senderID,
-                             k.encode('ascii', 'ignore'),
-                             found.decode('utf-8', 'ignore'),
-                             status,
-                             int(v[0])])
-
-    def dump_knowledge(self):
-
-        """
-        function used to fill the knowledge table from the hashtable,
-        also it retrieve wikiurl from wikipedia and category from conceptnet
-        :return:
-        """
-        total = len(self.hashtable)
-        count = 0
-
-        #iterate new elements
-        for k, v in self.hashtable.iteritems():
-
-            # check if chunk already exists
-            exist = self.db.existchunk_kl(k)
-            count += 1
-
-            # NEW CHUNK
-            if len(exist) == 0:
-
-                #category retrieval
-                cat = self.concepnet.search(k)
-                print cat
-                if cat is None:
-                    cat = ''
-
-                ## TODO insert the data in the DB
-                self.db.insert_kl(lambda: self.insert_kl(cat=cat,
-                                                         chunk=k,
-                                                         founds=v[1:]))
-
-            self.app.root.pb_sender_value = (100 * (count)) / total
-
-
-    def insert_kl(self, cat, chunk, founds):
-        """
-        function used inside dump_knowledge to execute the insert for all meanings for that chunk
-        """
-
-        campi = ['chunk', 'found', 'category', 'url', 'disambiguation_url', 'ngram']
-        row = namedtuple('userdata', campi)
-
-        for found in founds:
-            url, dis = self.wiki.geturl(found)
-
-            yield row._make([chunk,
-                             found.encode('utf-8', errors='ignore'),
-                             cat,
-                             url,
-                             dis,
-                             len(chunk.split(' '))])
-
-
     def dump_general(self):
 
+        '''
+        Function to dump my hashtable in 2 tables
+        KNOWLEDGE
+        USERDATA
+        :return:
+        '''
+
         total = len(self.hashtable)
         count = 0
 
@@ -354,6 +269,7 @@ class SenderThread(Thread):
             # check if chunk already exists
             exist = self.db.existchunk_kl(k)
             count += 1
+            good_url = False
 
             ###########################################################
             ## KL
@@ -365,7 +281,9 @@ class SenderThread(Thread):
                 ## add to KL
                 for found in v[1:]:
                     url, dis = self.wiki.geturl(found)
-                    self.db.insert_kl_nocat(chunk=k, found=found.decode('utf-8', 'ignore'), url=url, dis=dis, ngram=len(k.split(' ')))
+                    if url == '':
+                        good_url = True
+                    self.db.insert_kl_nocat(chunk=k, found=found, url=url, dis=dis, ngram=len(k.split(' ')))
 
                 ## category retrieval
                 self.concepnet.search(k)
@@ -375,18 +293,18 @@ class SenderThread(Thread):
             ## UD
             ###########################################################
 
-            if len(v) > 2:
-                ## AMBIGUOUS
-                found = 'ambiguous'
-                status = 0
-            elif len(v) == 2:
-                ## APPROVED
-                found = v[1] #the exact value
-                status = 1
-            else:
+            if good_url or len(v) == 1:
                 ## UNAPPROVED
                 found = '' #no meaning found
                 status = 2
+            elif len(v) > 2:
+                ## AMBIGUOUS
+                found = 'ambiguous'
+                status = 0
+            else: #if len(v) == 2
+                ## APPROVED
+                found = v[1] #the exact value
+                status = 1
 
             self.db.insert_single_ud(userid=self.app.root.userID,
                              senderid=self.app.root.senderID,

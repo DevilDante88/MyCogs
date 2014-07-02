@@ -89,8 +89,10 @@ class LabelH50(Label):
 class CheckBoxH50(CheckBox):
     pass
 
+
 class GridLayout1Scroll(GridLayout):
     pass
+
 
 class GridLayout1(GridLayout):
     pass
@@ -109,6 +111,10 @@ class IconButtonPlus(ButtonBehavior, Image):
 
 
 class IconButtonDel(ButtonBehavior, Image):
+    pass
+
+
+class IconButtonRefresh(ButtonBehavior, Image):
     pass
 
 
