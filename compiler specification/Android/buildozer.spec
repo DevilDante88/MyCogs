@@ -1,7 +1,7 @@
 [app]
 
 # (str) Title of your application
-title = My Cogs
+title = MyCogs
 
 # (str) Package name
 package.name = mycogs
@@ -13,7 +13,7 @@ package.domain = org.test
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas,ttf,ini
+source.include_exts = py,png,jpg,kv,atlas,ttf
 
 # (list) Source files to exclude (let empty to not exclude anything)
 #source.exclude_exts = spec
@@ -25,14 +25,14 @@ source.include_exts = py,png,jpg,kv,atlas,ttf,ini
 #source.exclude_patterns = license,images/*/*.jpg
 
 # (str) Application versioning (method 1)
-#version.regex = __version__ = ['"](.*)'['"]
+#version.regex = __version__ = ['"](.*)['"]
 #version.filename = %(source.dir)s/main.py
 
 # (str) Application versioning (method 2)
 version = 1.2.0
 
 # (list) Application requirements
-requirements = kivy
+requirements = sqlite3, openssl, numpy, lxml, kivy
 
 # (list) Garden requirements
 #garden_requirements =
@@ -47,7 +47,7 @@ requirements = kivy
 orientation = landscape
 
 # (bool) Indicate if the application should be fullscreen or not
-fullscreen = 1
+fullscreen = 0
 
 
 #
@@ -55,7 +55,7 @@ fullscreen = 1
 #
 
 # (list) Permissions
-#android.permissions = INTERNET
+android.permissions = INTERNET, WRITE_EXTERNAL_STORAGE
 
 # (int) Android API to use
 android.api = 14
@@ -70,7 +70,7 @@ android.sdk = 21
 android.ndk = 9c
 
 # (bool) Use --private data storage (True) or --dir public storage (False)
-android.private_storage = True
+#android.private_storage = True
 
 # (str) Android NDK directory (if empty, it will be automatically downloaded.)
 #android.ndk_path =
@@ -134,10 +134,10 @@ android.private_storage = True
 
 # (str) Name of the certificate to use for signing the debug version
 # Get a list of available identities: buildozer ios list_identities
-ios.codesign.debug = "iPhone Developer: Matteo Renzi Gozzi (Z8QQD688PP)"
+#ios.codesign.debug = "iPhone Developer: <lastname> <firstname> (<hexstring>)"
 
 # (str) Name of the certificate to use for signing the release version
-ios.codesign.release = %(ios.codesign.debug)s
+#ios.codesign.release = %(ios.codesign.debug)s
 
 
 [buildozer]
