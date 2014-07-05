@@ -46,7 +46,7 @@ Then you can start the building of the libraries. Inside the kivy-ios folder, fr
     
 It will take a long, so don't worry and go take a coffe.
 
-#. Add your porject to xcode
+#. Add your project to xcode
 
     tools/create-xcode-project.sh mycogs /path/to/your/appdir
     open app-mycogs/test.xcodeproj
@@ -66,6 +66,10 @@ Click on the + button on the bottom and add these libraries that you can find in
 Now you need to set the the app icon and backgroud loading image. In the project tree, right click on Resources and "add files to mycogs" and select all files that can be downloaded by this repository in the "xcode_data" folder.
 
 Set the just imported image in the project
+
+#. Run your project
+
+You have done it! Just click on the play button and wait that your application will be installed on your device.
     
     
     
