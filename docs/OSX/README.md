@@ -6,7 +6,7 @@ To achieve the compilation of MyCogs App for OSX, you should follow this guide s
 Prerequisites
 -------------------------------------
 
-* [PyInstaller 2.1](www.pyinstaller.com)
+* [PyInstaller 2.1](www.pyinstaller.org)
 * Python 2.7
 * OSX system
 
