@@ -17,6 +17,8 @@ These steps are required to make your system ready to build MyCogs app
 
 Download and install buildozer and some dependencies
 
+	xcode-select --install
+	sudo pip install lxml
 	apt-get install python-buildozer
 	
 	
