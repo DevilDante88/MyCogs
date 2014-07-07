@@ -43,6 +43,7 @@ TODO list
 
 * generate a queryable category structure
 * create a "search" screen
+* keep the user password only per single session
 * retrieve image from wikipedia (if possible)
 
 Known Bugs
