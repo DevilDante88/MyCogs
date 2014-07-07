@@ -18,6 +18,10 @@ These steps are required to make your system ready to build MyCogs app
 
 Download and install buildozer and some dependencies
 
+	sudo pip install --upgrade cython
+	sudo dpkg --add-architecture i386
+	sudo apt-get update
+	sudo apt-get install build-essential ccache git ia32-libs libncurses5:i386 libstdc++6:i386 python2.7 python2.7-dev openjdk-7-jdk unzip zlib1g-dev zlib1g:i386
 	apt-get install python-buildozer
 	
 Compiling
