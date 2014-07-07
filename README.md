@@ -1,12 +1,7 @@
 MyCogs
 ======
 
-A simple noun phrase data extraction from your gmail account!
-Realized in Python with Kivy framework, NLTK, wikipedia and ConceptNet5
-
-MyCogs high level steps:
-
-I’m developing an Information Retrieval application with the aim of extracting and generating knowledge from an email account (at the moment only from a gmail one).
+MyCogs, a multi-platform Information Retrieval application with the aim of extracting and generating knowledge from an email account (at the moment only from a gmail one). Realized in Python with the help of many different libraries as [Kivy](http://kivy.org), [NLTK](http://www.nltk.org), [wikipedia API for python](https://pypi.python.org/pypi/wikipedia/) and [ConceptNet5](http://conceptnet5.media.mit.edu) (some of them has been lightly modified to be able to run on all systems).
 
 The workflow of this application is divided in 4 main steps:
 
@@ -14,15 +9,15 @@ The workflow of this application is divided in 4 main steps:
 and generate a list of senders extracting the real sender if it is a forwarded one.
 
 2) The user has the ability to choose the sender from the generated list. After that, the program will extract the text from those mails and pulls out all the noun phrases. 
-For each of these, MyCogs will look for one or more possible meanings on Wikipedia and at the same time will pull out some possible categories (like “animal” for “dog”) 
-from the KB [Conceptnet](http://conceptnet5.media.mit.edu).
+For each of these, MyCogs will look for one or more possible meanings on Wikipedia and at the same time will pull out some possible categories (like “animal” for “dog”)  from the KB [ConceptNet5](http://conceptnet5.media.mit.edu).
 
 3) The last part allows the user to view the results, dividing the results obtained in 3 different tables: 
-	*“Approved” (when the program obtain one single result), 
-	*"Unapproved” (when no result is obtained) and 
-	*“Ambiguous” (when the program retrieved more results for that noun-phrase).
 
-4) The desired results do not always correspond to those obtained and each user can have a "default meaning" for a particular noun phrase different between them. For this reason, each user can modify the data via the GUI and the program will learn from these changes for successive research.
+	“Approved” (when the program obtain one single result), 
+	"Unapproved” (when no result is obtained),
+	“Ambiguous” (when the program retrieved more results for that noun-phrase).
+
+4) The desired results do not always correspond to those obtained and each user can have a "default meaning" for a particular noun phrase different between them. For this reason, each user can modify the data via the GUI and the program will learn from these changes for successive researches.
 
 Prerequisites
 -------------------------------------
