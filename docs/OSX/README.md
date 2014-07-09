@@ -28,10 +28,10 @@ Open mycogs.spec with a text editor and edit the 3 paths to fit your installatio
 Compiling
 -------------------------------------
 
-Copy the file buildozer.spec (from this repository folder) inside the project folder
+Copy the file mycogs.spec (from this folder repository) inside the project folder. Then:
 
-	cd /path/to/MyCogs/folder
-	buildozer -v android debug
+	cd PyInstaller-2.1
+	kivy pyinstaller.py MyCogs/mycogs.spec
 	
 this process will take about 10 minutes depending on your internet connection.
 If all works good, the terminal output should say you that the file MyCogs-1.2.0.debug.apk
