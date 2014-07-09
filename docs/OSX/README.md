@@ -32,9 +32,9 @@ Copy the file mycogs.spec (from this folder repository) inside the project folde
 
 	cd PyInstaller-2.1
 	kivy pyinstaller.py MyCogs/mycogs.spec
-	pushd touchtracer/dist
-	mv touchtracer touchtracer.app
-	hdiutil create ./Touchtracer.dmg -srcfolder touchtracer.app -ov
+	pushd mycogs/dist
+	mv mycogs mycogs.app
+	hdiutil create ./MyCogs.dmg -srcfolder mycogs.app -ov
 	popd
 
 
