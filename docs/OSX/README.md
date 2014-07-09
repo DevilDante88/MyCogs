@@ -32,11 +32,10 @@ Copy the file mycogs.spec (from this folder repository) inside the project folde
 
 	cd PyInstaller-2.1
 	kivy pyinstaller.py MyCogs/mycogs.spec
-	
-this process will take about 10 minutes depending on your internet connection.
-If all works good, the terminal output should say you that the file MyCogs-1.2.0.debug.apk
-has been created.
-
+	pushd touchtracer/dist
+	mv touchtracer touchtracer.app
+	hdiutil create ./Touchtracer.dmg -srcfolder touchtracer.app -ov
+	popd
 
 
 
