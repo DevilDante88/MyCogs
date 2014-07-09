@@ -1,4 +1,4 @@
-__author__ = 'matteo'
+__author__ = 'Matteo Renzi'
 
 from kivy.uix.button import Button
 from kivy.properties import ListProperty
@@ -12,6 +12,7 @@ from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.image import Image
 from kivy.uix.gridlayout import GridLayout
 from kivy.lang import Builder
+from kivy.app import App
 
 Builder.load_file('GUI/utils/utils.kv')
 
@@ -115,6 +116,14 @@ class IconButtonDel(ButtonBehavior, Image):
 
 
 class IconButtonRefresh(ButtonBehavior, Image):
+    pass
+
+
+class IconButtonUp(ButtonBehavior, Image):
+    pass
+
+
+class IconButtonDown(ButtonBehavior, Image):
     pass
 
 

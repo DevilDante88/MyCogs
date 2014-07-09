@@ -28,6 +28,7 @@
                     hint_text: 'Email'
                     text: ''
                     size_hint: 1, 0.5
+                    font_size: '38sp'
                     multiline: False
                     padding: [5, ( self.height - self.line_height ) / 2]
                 TextInput:
@@ -35,6 +36,7 @@
                     hint_text: 'Password'
                     text: ''
                     size_hint: 1, 0.5
+                    font_size: '38sp'
                     multiline: False
                     password: True
                     padding: [5, ( self.height - self.line_height ) / 2]
@@ -54,4 +56,4 @@
                     id: login
                     text: "[b]LOGIN[/b]"
                     markup: True
-                    on_press: root.check_install()
+                    on_press: root.login()

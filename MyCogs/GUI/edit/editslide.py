@@ -1,4 +1,4 @@
-__author__ = 'matteo'
+__author__ = 'Matteo Renzi'
 
 import re
 
@@ -19,7 +19,7 @@ from background.db.manager import Manager
 from GUI.utils.utils import (IconButtonOk, IconButtonPlus, IconButtonDel, ColorDownToggleButtonH50,
                              BoxLayoutH50, IconButtonRefresh,
                              ColorDownButtonH50, TextInputH50, LabelH50, CheckBoxH50)
-from wikipedia.WikiConnector import WikiConnector
+from wikipedia.wikiapi import Wikiapi
 from background.conceptnet5.conceptnet5 import ConceptNet5
 
 Builder.load_file('GUI/edit/editslide.kv')
@@ -62,7 +62,7 @@ class EditSlide(BoxLayout):
         self.found_numb = 0
         self.counter = 0
         self.btn_split = None
-        self.wiki = WikiConnector()
+        self.wiki = Wikiapi()
         self.conceptnet = ConceptNet5()
 
     def fill_data(self):
@@ -93,7 +93,7 @@ class EditSlide(BoxLayout):
         #set by default the first meaning True
         self.grid_row.children[0].children[0].active = True
 
-        self.addmore = IconButtonPlus(id='addmore', spacing=20, size_hint_y=None, height=50)
+        self.addmore = IconButtonPlus(id='addmore', spacing=20, size_hint_y=None, height=self.app.row_height)
         self.addmore.bind(on_press=self.add_meaning_empty)
         self.grid_row.add_widget(self.addmore)
 
@@ -123,10 +123,10 @@ class EditSlide(BoxLayout):
         self.found_numb += 1
         self.counter += 1
         bl = BoxLayoutH50(id='bl'+str(self.found_numb))
-        al = AnchorLayout(anchor_x='center', anchor_y='center', size_hint_x=0.05, size_hint_y=None, height=50)
+        al = AnchorLayout(anchor_x='center', anchor_y='center', size_hint_x=0.05, size_hint_y=None, height=self.app.row_height)
         al.add_widget(IconButtonDel(id='btn'+str(self.found_numb), on_press=self.remove_line))
         bl.add_widget(al)
-        al2 = AnchorLayout(anchor_x='center', anchor_y='center', size_hint_x=0.05, size_hint_y=None, height=50)
+        al2 = AnchorLayout(anchor_x='center', anchor_y='center', size_hint_x=0.05, size_hint_y=None, height=self.app.row_height)
         btn_ref = IconButtonRefresh(id='btn_ref'+str(self.found_numb))
         btn_ref.bind(on_press=self.update_wiki)
         al2.add_widget(btn_ref)
@@ -150,10 +150,10 @@ class EditSlide(BoxLayout):
         self.found_numb += 1
         self.counter += 1
         bl = BoxLayoutH50(id='bl'+str(self.found_numb))
-        al = AnchorLayout(anchor_x='center', anchor_y='center', size_hint_x=0.05, size_hint_y=None, height=50)
+        al = AnchorLayout(anchor_x='center', anchor_y='center', size_hint_x=0.05, size_hint_y=None, height=self.app.row_height)
         al.add_widget(IconButtonDel(id='btn'+str(self.found_numb), on_press=self.remove_line))
         bl.add_widget(al)
-        al2 = AnchorLayout(anchor_x='center', anchor_y='center', size_hint_x=0.05, size_hint_y=None, height=50)
+        al2 = AnchorLayout(anchor_x='center', anchor_y='center', size_hint_x=0.05, size_hint_y=None, height=self.app.row_height)
         btn_ref = IconButtonRefresh(id='btn_ref'+str(self.found_numb))
         btn_ref.bind(on_press=self.update_wiki)
         al2.add_widget(btn_ref)

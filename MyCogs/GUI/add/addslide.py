@@ -1,4 +1,4 @@
-__author__ = 'matteo'
+__author__ = 'Matteo Renzi'
 
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
@@ -53,7 +53,7 @@ class AddSlide(BoxLayout):
         if self.ti_chunk.text == '':
             # if chunk is empty alert user
             popup = Popup(title='Alert!!', content=Label(text="Empty chunk inserted, retry!"),
-                          size_hint=(None, None), size=(400, 200))
+                          size_hint=(0.5, 0.3), font_size='38sp')
             popup.open()
             return
 
@@ -63,7 +63,7 @@ class AddSlide(BoxLayout):
             # if chunk is already present in the UD table
             popup = Popup(title='Alert!!',
                           content=Label(text="Chunk already present!\nYou can modify it pressing on the edit button!"),
-                          size_hint=(None, None), size=(400, 200))
+                          size_hint=(0.5, 0.3), font_size='38sp')
             popup.open()
         else:
             # add popup with the chosen text which will start the thread

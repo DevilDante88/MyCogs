@@ -1,4 +1,4 @@
-__author__ = 'matteo'
+__author__ = 'Matteo Renzi'
 
 from kivy.app import App
 import os.path
@@ -27,7 +27,7 @@ class DwnThread(Thread):
 
         popup = self.kwargs['parent']
 
-        packages = ['stopwords', 'wordnet', 'punkt', 'maxent_treebank_pos_tagger']
+        packages = ['stopwords', 'wordnet', 'punkt', 'treebank']
         directory = self.path + '/' + self.nltk_dir
 
         downloader = nltk.downloader.Downloader(download_dir=directory)

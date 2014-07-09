@@ -1,13 +1,14 @@
-__author__ = 'matteo'
+__author__ = 'Matteo Renzi'
 
 import time
 from threading import Thread
 
+from wikipedia.wikiapi import Wikiapi
+from kivy.app import App
+
 from background.db.manager import Manager
 from background.conceptnet5.conceptnet5 import ConceptNet5
-from wikipedia.WikiConnector import WikiConnector
 
-from kivy.app import App
 
 class AddThread(Thread):
 
@@ -20,7 +21,7 @@ class AddThread(Thread):
         self.app = App.get_running_app()
         self.meaning = {}
         self.db = None
-        self.wiki = WikiConnector(verbose=False)
+        self.wiki = Wikiapi(verbose=False)
         self.conceptnet = ConceptNet5()
 
     def run(self):

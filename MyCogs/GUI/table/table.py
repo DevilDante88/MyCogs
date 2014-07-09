@@ -2,8 +2,7 @@
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
-from kivy.uix.button import Button
-
+from kivy.app import App
 from kivy.uix.listview import ListItemButton, ListItemLabel, CompositeListItem, ListView
 from kivy.adapters.listadapter import ListAdapter
 from kivy.core.text.markup import MarkupLabel
@@ -49,28 +48,23 @@ class Table(BoxLayout):
     def __init__(self, data_ap, **kwargs):
 
         super(Table, self).__init__(**kwargs)
+        self.app = App.get_running_app()
 
         ## first check if len data = 0 add label to alert user
         if len(data_ap) is 0:
-            self.add_widget(Label(text="No Data", font_size='26dp'))
+            self.add_widget(Label(text="No Data", font_size='32dp'))
             return
 
         ########################
         ## HEADER
         ########################
 
-        self.container_header = GridLayout(cols=3, height=27, size_hint_y=0.05)
+        self.container_header = GridLayout(cols=3, size_hint_y=None, height=(self.app.row_height*0.55), spacing=10)
 
-        listview_header_widgets = [Label(text="CHUNK",
-                                         size_hint_y=None,
-                                         height=25),
-                                   Label(text="FOUND",
-                                          size_hint_y=None,
-                                          height=25),
+        listview_header_widgets = [Label(text="CHUNK"),
+                                   Label(text="FOUND"),
                                    Label(text="SCORE",
-                                          size_hint_y=None,
-                                          size_hint_x=0.2,
-                                          height=25)]
+                                          size_hint_x=0.2)]
 
         for x in range(3):
             self.container_header.add_widget(listview_header_widgets[x])
@@ -94,7 +88,7 @@ class Table(BoxLayout):
                 {'text': obj.chunk,
                  'value': obj.chunk,
                  'size_hint_y': None,
-                 'height': 25,
+                 'height': self.app.row_height * 0.5,
                  'cls_dicts': [{'cls': Cell,
                                 'kwargs': {'text': obj.chunk,
                                            'id': obj.chunk}},

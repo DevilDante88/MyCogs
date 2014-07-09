@@ -1,4 +1,4 @@
-__author__ = 'matteo'
+__author__ = 'Matteo Renzi'
 
 from nltk import bigrams
 from nltk import trigrams

@@ -9,7 +9,6 @@
 
 MyCogsRoot:
 
-# BEGIN WEATHER_ROOT
 <MyCogsRoot>:
 
     carousel: carousel
@@ -25,10 +24,12 @@ MyCogsRoot:
     BoxLayout:
         orientation: "vertical"
         ActionBar:
+            size_hint_y: 0.1
             ActionView:
                 use_separator: True
                 ActionPrevious:
                     title: "MyCogs App"
+                    app_icon: "data/img/app-icon.png"
                     with_previous: False
                 ActionOverflow:
                     ActionButton:
@@ -73,6 +74,4 @@ MyCogsRoot:
             FoundSlide:
                 id: foundslide
 
-
-# END WEATHER_ROOT
 

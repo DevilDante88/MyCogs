@@ -20,7 +20,7 @@
         id: grid2
         size_hint_y: None
         padding: 5,5,5,0
-        height: 55
+        height: app.row_height + (app.row_height * 0.1)
 
         Label:
             text: 'Parsed Chunk'
@@ -70,7 +70,7 @@
     GridLayout:
         cols: 2
         size_hint_y: None
-        height: 120
+        height: app.row_height * 2.2
         spacing: 5
         padding: 5,5,5,5
 
@@ -109,14 +109,16 @@
         orientation: 'vertical'
         spacing: 5
         size_hint_y: None
-        height: 105
+        height: app.row_height * 2.2
         padding: 5,5,5,5
 
         ColorDownButtonH50:
             id: save
-            text: 'SAVE'
+            text: '[b]SAVE[/b]'
+            markup: True
             on_press: root.save
 
         ColorDownButtonH50:
-            text: 'DISCARD'
+            text: '[b]DISCARD[/b]'
+            markup: True
             on_press: app.root.carousel.load_slide(app.root.addslide)

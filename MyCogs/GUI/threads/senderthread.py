@@ -1,8 +1,8 @@
-__author__ = 'matteo'
+__author__ = 'Matteo Renzi'
 
 import time
 from threading import Thread
-from wikipedia.WikiConnector import WikiConnector
+from wikipedia.wikiapi import Wikiapi
 
 from nltk import bigrams
 from nltk import trigrams
@@ -30,7 +30,7 @@ class SenderThread(Thread):
         self.filter = Filter(verbose=False)
         self.ngram = NgramsFilter(verbose=False)
         self.db = None
-        self.wiki = WikiConnector(verbose=False)
+        self.wiki = Wikiapi(verbose=False)
         self.hashtable = {}
         self.concepnet = ConceptNet5()
 
@@ -93,7 +93,6 @@ class SenderThread(Thread):
 
                 self.app.root.pb_sender_label = 'Loading WikiUrl & Category...'
                 self.app.root.pb_sender_value = 0
-
 
                 self.dump_general()
                 # FILL knowledge table
@@ -280,6 +279,7 @@ class SenderThread(Thread):
 
                 ## add to KL
                 for found in v[1:]:
+                    found = found.encode('ascii', 'ignore')
                     url, dis = self.wiki.geturl(found)
                     if url == '':
                         good_url = True

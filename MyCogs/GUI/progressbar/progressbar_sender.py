@@ -1,4 +1,4 @@
-__author__ = 'matteo'
+__author__ = 'Matteo Renzi'
 
 from kivy.uix.popup import Popup
 from kivy.lang import Builder
@@ -13,20 +13,13 @@ Builder.load_string('''
     auto_dismiss: False
     title: app.root.pb_sender_label
 
-    canvas.before:
-        Color:
-            rgba: 0.12, 0.13, 0.14, 1
-        Rectangle:
-            # self here refers to the widget i.e FloatLayout
-            pos: self.pos
-            size: self.size
-
     AnchorLayout:
         anchor_x: 'center'
         anchor_y: 'center'
 
         Knob:
-            size: 200, 200
+            width: self.parent.height - 10
+            height: self.parent.height - 10
             min: 0
             max: 100
             value: app.root.pb_sender_value

@@ -27,9 +27,9 @@ import os
 import re
 import warnings
 
-from .builder import builder_registry, ParserRejectedMarkup
-from .dammit import UnicodeDammit
-from .element import (
+from bs4.builder import builder_registry, ParserRejectedMarkup
+from bs4.dammit import UnicodeDammit
+from bs4.element import (
     CData,
     Comment,
     DEFAULT_OUTPUT_ENCODING,

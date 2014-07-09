@@ -1,18 +1,18 @@
-<IconButtonDOWN>
-    source: 'data/img/arrow_down.png'
-
-<IconButtonUP>
-    source: 'data/img/arrow_up.png'
-
 <MyLabel>:
     markup: True
     shorten: True
     text_size: self.size
 
+<IconButtonDOWN>
+    source: 'data/img/arrow-down.png'
+
+<IconButtonUP>
+    source: 'data/img/arrow-up.png'
+
 <RowDetailView>:
 
     size_hint_y: None
-    height: 95
+    height: app.row_height * 2
 
     canvas.before:
         Color:
@@ -47,6 +47,7 @@
 
                     orientation: 'vertical'
                     size_hint_x: 0.1
+                    spacing: 10
 
                     AnchorLayout:
 

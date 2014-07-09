@@ -1,4 +1,4 @@
-__author__ = 'matteo'
+__author__ = 'Matteo Renzi'
 
 import re
 from kivy.uix.boxlayout import BoxLayout
@@ -21,8 +21,6 @@ from GUI.utils.utils import (TextInputH50, BoxLayoutH50,
                              CheckBoxH50, IconButtonDel, IconButtonPlus, GridLayout1)
 
 Builder.load_file('GUI/add/foundslide.kv')
-
-
 
 class FoundSlide(BoxLayout):
 
@@ -59,8 +57,6 @@ class FoundSlide(BoxLayout):
         self.found_numb = 0
         self.counter = 0
         self.bl_found.clear_widgets()
-        #self.scroll = ScrollView(size_hint=(0.5, 1), size=(400, 500000), scroll_y=0, pos_hint={'center_x': .5, 'center_y': .5})
-        #self.bl_found.add_widget(self.scroll)
         self.grid_row = GridLayout1()
         self.bl_found.add_widget(self.grid_row)
         self.save.bind(on_press=self.save_data)
@@ -73,7 +69,7 @@ class FoundSlide(BoxLayout):
         for k, v in self.meaning.iteritems():
             self.add_meaning_full(k, v[0], v[1])
 
-        self.addmore = IconButtonPlus(id='addmore', spacing=20, size_hint_y=None, height=50)
+        self.addmore = IconButtonPlus(id='addmore', spacing=20, size_hint_y=None, height=self.app.row_height)
         self.addmore.bind(on_press=self.add_meaning_empty)
         self.grid_row.add_widget(self.addmore)
 
@@ -89,7 +85,7 @@ class FoundSlide(BoxLayout):
         self.found_numb += 1
         self.counter += 1
         bl = BoxLayoutH50(id='bl'+str(self.found_numb))
-        al = AnchorLayout(anchor_x='center', anchor_y='center', size_hint_x=0.05, size_hint_y=None, height=50)
+        al = AnchorLayout(anchor_x='center', anchor_y='center', size_hint_x=0.05, size_hint_y=None, height=self.app.row_height)
         al.add_widget(IconButtonDel(id='btn'+str(self.found_numb), on_press=self.remove_line))
         bl.add_widget(al)
         bl.add_widget(TextInputH50(id='found'+str(self.found_numb), text='', size_hint_x=0.3))
@@ -116,7 +112,7 @@ class FoundSlide(BoxLayout):
         self.found_numb += 1
         self.counter += 1
         bl = BoxLayoutH50(id='bl'+str(self.found_numb))
-        al = AnchorLayout(anchor_x='center', anchor_y='center', size_hint_x=0.05, size_hint_y=None, height=50)
+        al = AnchorLayout(anchor_x='center', anchor_y='center', size_hint_x=0.05, size_hint_y=None, height=self.app.row_height)
         al.add_widget(IconButtonDel(id='btn'+str(self.found_numb), on_press=self.remove_line))
         bl.add_widget(al)
         bl.add_widget(TextInputH50(id='found'+str(self.found_numb), text=found, size_hint_x=0.3))
@@ -159,14 +155,14 @@ class FoundSlide(BoxLayout):
         if self.new_chunk.text == "":
             # no meaning for that chunk
             popup = Popup(title='Alert!!', content=Label(text="Chunk Empty! Please fill chunk"),
-                          size_hint=(None, None), size=(400, 200))
+                          size_hint=(0.5, 0.3), font_size='38sp')
             popup.open()
             return
 
         if self.counter == 0:
             # no meaning for that chunk
             popup = Popup(title='Alert!!', content=Label(text="No meaning for this chunk\nInsert at least one!"),
-                          size_hint=(None, None), size=(400, 200))
+                          size_hint=(0.5, 0.3), font_size='38sp')
             popup.open()
             return
 
@@ -183,13 +179,13 @@ class FoundSlide(BoxLayout):
 
             if found == '':
                 popup = Popup(title='Alert!!', content=Label(text="Empty found label not allowed!"),
-                          size_hint=(None, None), size=(400, 200))
+                          size_hint=(0.5, 0.3), font_size='38sp')
                 popup.open()
                 return
 
             if chosen is True and approved is False:
                 popup = Popup(title='Alert!!', content=Label(text="A meaning can't be chosen if not approved!"),
-                          size_hint=(None, None), size=(400, 200))
+                          size_hint=(0.5, 0.3), font_size='38sp')
                 popup.open()
                 return
 

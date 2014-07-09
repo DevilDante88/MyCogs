@@ -1,4 +1,4 @@
-__author__ = 'matteo'
+__author__ = 'Matteo Renzi'
 
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput

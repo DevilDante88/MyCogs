@@ -305,5 +305,20 @@ class ParserRejectedMarkup(Exception):
 # builder registrations will take precedence. In general, we want lxml
 # to take precedence over html5lib, because it's faster. And we only
 # want to use HTMLParser as a last result.
-from bs4.builder import htmlparser
-register_treebuilders_from(htmlparser)
+#from . import _htmlparser
+#register_treebuilders_from(_htmlparser)
+#try:
+#    from . import _html5lib
+#    register_treebuilders_from(_html5lib)
+#except ImportError:
+#    # They don't have html5lib installed.
+#    pass
+
+
+try:
+    from . import _lxml
+    register_treebuilders_from(_lxml)
+except ImportError:
+    # They don't have lxml installed.
+    print 'error importing _lxml'
+    pass

@@ -1,0 +1,36 @@
+__author__ = 'matteo'
+
+from background.textprocessing import cosine
+import collections
+from collections import defaultdict
+
+class WikiConnector:
+
+    '''
+    Class that provides a connection to Wikipedia
+    '''
+
+    def __init__(self, verbose=False):
+
+        self.phrase = ''
+        self.verbose = verbose
+
+    def getsummary(self, phrase):
+
+        return 'summary'.encode('utf-8')
+
+    def searchphrase(self, phrase):
+
+        return []
+
+    def searchword(self, phrase):
+
+        return []
+
+    def geturl(self, phrase):
+        url = ''
+
+        return url, 0
+
+
+

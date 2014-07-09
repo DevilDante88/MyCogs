@@ -1,4 +1,4 @@
-__author__ = 'matteo'
+__author__ = 'Matteo Renzi'
 
 from kivy.uix.boxlayout import BoxLayout
 from kivy.app import App

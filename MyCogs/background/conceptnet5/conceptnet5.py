@@ -1,4 +1,4 @@
-__author__ = 'matteo'
+__author__ = 'Matteo Renzi'
 
 import urllib
 from kivy.network.urlrequest import UrlRequest

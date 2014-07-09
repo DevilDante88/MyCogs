@@ -105,6 +105,7 @@ def search(query, results=10, suggestion=False):
   if 'error' in raw_results:
     if raw_results['error']['info'] in ('HTTP request timed out.', 'Pool queue is full'):
       raise HTTPTimeoutError(query)
+      ## TODO insert a popup to advise the user of the error
     else:
       raise WikipediaException(raw_results['error']['info'])
 
@@ -386,7 +387,7 @@ class WikipediaPage(object):
       request = _wiki_request(query_params)
       html = request['query']['pages'][pageid]['revisions'][0]['*']
 
-      lis = BeautifulSoup(html).find_all('li')
+      lis = BeautifulSoup(html, "lxml").find_all('li')
       filtered_lis = [li for li in lis if not 'tocsection' in ''.join(li.get('class', []))]
       may_refer_to = [li.a.get_text() for li in filtered_lis if li.a]
 

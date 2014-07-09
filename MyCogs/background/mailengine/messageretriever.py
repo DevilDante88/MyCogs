@@ -1,4 +1,4 @@
-__author__ = 'matteo'
+__author__ = 'Matteo Renzi'
 
 from background.mailengine.connector import Connector
 from StringIO import StringIO

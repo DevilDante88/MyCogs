@@ -1,10 +1,7 @@
-__author__ = 'matteo'
+__author__ = 'Matteo Renzi'
 
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.anchorlayout import AnchorLayout
 from kivy.properties import StringProperty, ObjectProperty, BooleanProperty
-from kivy.uix.checkbox import CheckBox
 from kivy.uix.label import Label
 
 
@@ -15,7 +12,6 @@ from kivy.lang import Builder
 
 from background.db.manager import Manager
 from GUI.table.popups import PopUpDel
-from GUI.edit.editslide import EditSlide
 
 Builder.load_file('GUI/table/rowdetailview.kv')
 

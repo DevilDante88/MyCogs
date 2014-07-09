@@ -1,4 +1,4 @@
-__author__ = 'matteo'
+__author__ = 'Matteo Renzi'
 
 import imaplib
 import email
@@ -73,7 +73,7 @@ class Connector:
         try:
             status, data = self.imap.select(folder)
         except imaplib.IMAP4.error as e:
-            print 'Set Folder failed, ' + e
+            print 'Set Folder failed, ', e
 
         return status, data
 
