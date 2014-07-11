@@ -46,7 +46,7 @@ TODO list
 * implement a parallel computing for the textprocessing and information retrieval thread
 * retrieve image from wikipedia (if possible)
 * implement a multi-language noun phrase extraction (only english in supported at the moment)
-* refer the category to the single meaning found wikipedia and not from the original extracted NP
+* refer the category to the single meaning found in wikipedia and not from the original extracted NP
 
 Known Bugs
 ------------
