@@ -44,9 +44,10 @@ class MyCogsRoot(BoxLayout):
     It manage the action bar and the carousel that keeps and load each slides
     '''
 
-    #initialize global variables for sender e user ID
+    #initialize global variables for sender and user ID and passoword
     userID = NumericProperty(0)
     senderID = NumericProperty(0)
+    pwd = StringProperty('')
 
     current_chunk = StringProperty('')
     new_chunk = StringProperty('')
@@ -143,6 +144,7 @@ class MyCogsRoot(BoxLayout):
 
         self.app.root.senderID = 0
         self.app.root.userID = 0
+        self.app.root.pwd = ''
         self.app.root.senderlist.clear_widgets()
 
         self.app.root.login.ids.email.text = ''

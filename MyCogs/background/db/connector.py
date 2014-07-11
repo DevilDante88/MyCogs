@@ -7,7 +7,6 @@ from kivy.app import App
 from collections import namedtuple
 from background.db.initializer import Initializer
 
-
 ''' namedtuple to retrieve CHUNKS
     used to replace the classic row of sqlite
 '''

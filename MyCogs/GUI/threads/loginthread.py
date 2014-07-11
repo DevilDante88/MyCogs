@@ -40,7 +40,7 @@ class LoginThread(Thread):
         self.app.root.pb_login_value = 0
 
         self.email = self.kwargs['email']
-        self.pwd = self.kwargs['pwd']
+        self.app.root.pwd = self.kwargs['pwd']
         popup = self.kwargs['parent']
         popup.status = 'OK'
 
@@ -91,14 +91,14 @@ class LoginThread(Thread):
         if self.checkEmail(self.email):
 
             self.mr.connect()
-            if self.mr.login(self.email, self.pwd):
+            if self.mr.login(self.email):
                 self.mr.setFolder()
 
                 #retrieve the list of IDs for that user account
                 new_uid = self.mr.getUID('ingest')
 
                 #check if user is present in the DB, or create a new one
-                user_id = self.db.getUserID(self.email, self.pwd)
+                user_id = self.db.getUserID(self.email)
 
                 #add user ID to the global variables
                 self.app.root.userID = user_id
@@ -144,7 +144,7 @@ class LoginThread(Thread):
             print 'TOTAL UIDS to ADD: ', len(uids)
 
         self.mr.connect()
-        if self.mr.login(self.email, self.pwd):
+        if self.mr.login(self.email):
             self.mr.setFolder()
 
             #parse new uids

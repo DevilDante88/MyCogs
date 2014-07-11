@@ -20,7 +20,6 @@ class Initializer:
             cur.execute("CREATE TABLE user ( "
                         "id INTEGER PRIMARY KEY, "
                         "email CHAR(50) NOT NULL, "
-                        "password CHAR(30) NOT NULL, "
                         "readed TEXT DEFAULT '')")
 
         if self.verbose:

@@ -12,23 +12,23 @@ class Manager(Connector):
     ##################################################################################################
 
     ''' add an user to the system, return the ID assigned to the user '''
-    def addUser(self, email, pwd):
+    def addUser(self, email):
 
         cur = self.con.cursor()
-        cur.execute("INSERT INTO user (email, password) VALUES (?,?)", (email, pwd))
+        cur.execute("INSERT INTO user (email) VALUES (:email)", dict(email=email))
 
         return cur.lastrowid
 
     ''' retrive the user ID if the user exist, if not create a new one '''
-    def getUserID(self, email, pwd):
+    def getUserID(self, email):
 
         cur = self.con.cursor()
-        cur.execute("SELECT id FROM user WHERE email=:email AND password=:pwd",
-                    {"email": email, "pwd": pwd})
+        cur.execute("SELECT id FROM user WHERE email=:email",
+                    {"email": email})
 
         row = cur.fetchone()
         if row is None:
-            id = self.addUser(email, pwd)
+            id = self.addUser(email)
             return id
 
         else:
@@ -38,7 +38,7 @@ class Manager(Connector):
     def getUserAccount(self, id_user):
 
         cur = self.con.cursor()
-        cur.execute("SELECT email, password FROM user WHERE id=:ID",
+        cur.execute("SELECT email FROM user WHERE id=:ID",
                     {"ID": id_user})
 
         return cur.fetchone()

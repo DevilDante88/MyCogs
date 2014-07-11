@@ -78,8 +78,15 @@
             text: 'Category'
             size_hint_x: 0.25
 
-        TextInputH50:
-            id: new_category
+        BoxLayoutH50:
+            spacing: 5
+
+            TextInputH50:
+                id: new_category
+
+            IconButtonRefresh:
+                on_press: root.update_cat()
+                size_hint_x: 0.1
 
         Label:
             text: 'Table'

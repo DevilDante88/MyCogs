@@ -17,10 +17,12 @@ from kivy.lang import Builder
 from kivy.app import App
 
 from background.db.manager import Manager
+from background.conceptnet5.conceptnet5 import ConceptNet5
 from GUI.utils.utils import (TextInputH50, BoxLayoutH50,
                              CheckBoxH50, IconButtonDel, IconButtonPlus, GridLayout1)
 
 Builder.load_file('GUI/add/foundslide.kv')
+
 
 class FoundSlide(BoxLayout):
 
@@ -47,6 +49,7 @@ class FoundSlide(BoxLayout):
         self.app = App.get_running_app()
         self.grid_row = None
         self.scroll = None
+        self.conceptnet = ConceptNet5()
 
     def fill_data(self):
 
@@ -138,6 +141,16 @@ class FoundSlide(BoxLayout):
         """
         self.counter -= 1
         self.grid_row.remove_widget(instance.parent.parent)
+
+    def update_cat(self):
+
+        """
+        function to automatically update the category from the original chunk
+        :return:
+        """
+        print 'update category'
+        print 'chunk: ', self.new_chunk.text
+        self.conceptnet.search_addnew(self.new_chunk.text)
 
     def save_data(self, instance):
 

@@ -48,14 +48,17 @@ class Filter:
     def getAtags(self):
         return self.good_tag
 
-    '''
-    traverse a tree, obatin NP
-    subtrees: Generate all the subtrees of this tree, optionally restricted to trees matching the filter function.
-    height: The height of this tree.  The height of a tree containing no children is 1;
-            the height of a tree containing only leaves is 2;
-            and the height of any other tree is one plus the maximum of its children's heights.
-    '''
     def traverse(self, t):
+
+        """
+        traverse a tree, obatin NP
+        subtrees: Generate all the subtrees of this tree, optionally restricted to trees matching the filter function.
+        height: The height of this tree.  The height of a tree containing no children is 1;
+        the height of a tree containing only leaves is 2;
+        and the height of any other tree is one plus the maximum of its children's heights.
+        :param t:
+        :return:
+        """
 
         good = []
 

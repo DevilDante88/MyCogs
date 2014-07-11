@@ -66,7 +66,7 @@ class PosTagger:
             #sentences = [nltk.word_tokenize(sent) for sent in sentences]
             sentences = [self.tokenizer.tokenize(sent) for sent in sentences]
             # prefiltering to join bad tokenized words (like emails or url)
-            sentences = self.prefiltering_v2(sentences)
+            sentences = self.prefiltering(sentences)
             # pos tagging
             try:
                 sentences = [self.app.root.tnt_tagger.tag(sent) for sent in sentences]
@@ -101,7 +101,7 @@ class PosTagger:
         tcf.apply_freq_filter(1)
         return tcf.nbest(TrigramAssocMeasures.likelihood_ratio, 6)
 
-    def prefiltering_v2(self, sentences):
+    def prefiltering(self, sentences):
 
         """
         prefiltering function to deal with particular words:

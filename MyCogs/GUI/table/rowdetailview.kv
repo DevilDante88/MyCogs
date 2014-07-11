@@ -99,15 +99,12 @@
                         text: root.meaning
                         size_hint_y: 0.25
 
-                    BoxLayout:
+                    MyLabel:
+                        text: root.category
                         size_hint_y: 0.25
-                        ScrollView:
-
-                            MyLabel:
-                                text: root.category
-                                size_hint_y: None
-                                text_size: self.width, None
-                                height: self.texture_size[1]
+                        text_size: self.size
+                        shorten: True
+                        markup: True
 
                     MyLabel:
                         text: root.url

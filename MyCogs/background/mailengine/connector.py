@@ -2,6 +2,7 @@ __author__ = 'Matteo Renzi'
 
 import imaplib
 import email
+from kivy.app import App
 
 '''
 Class for the connection to an mail IMAP account.
@@ -11,10 +12,10 @@ class Connector:
     def __init__(self, imap_host = 'imap.gmail.com', verbose=False):
         self.imap_host = imap_host
         self.user = ''
-        self.pwd = ''
         self.imap = None
         self.messagesID = ()    ##empty set of message ID
         self.verbose = verbose
+        self.app = App.get_running_app()
 
     def setuser(self, user):
         self.user = user
@@ -22,11 +23,6 @@ class Connector:
     def getuser(self):
         return self.user
 
-    def setpwd(self, pwd):
-        self.pwd = pwd
-
-    def getpwd(self):
-        return self.pwd
 
     ''' function to connect to the selected imap host with SSL connection '''
     def connect(self):
@@ -42,14 +38,13 @@ class Connector:
             return False
 
     ''' function to login with user data '''
-    def login(self, user, password):
+    def login(self, user):
         ''' login '''
 
         self.user = user
-        self.pwd = password
 
         try:
-            self.imap.login(self.user, self.pwd)
+            self.imap.login(self.user, self.app.root.pwd)
             if self.verbose:
                 print 'EMAIL LOGIN: OK'
             return True

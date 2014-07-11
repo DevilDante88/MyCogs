@@ -100,8 +100,14 @@ class RowDetailView(BoxLayout):
                 # if I don't retrieve a result, no widget to be added
                 return
 
-            self.meaning = rows[self.app.root.carousel.current_slide.clicked].found
-            self.category = rows[self.app.root.carousel.current_slide.clicked].category
+            if len(rows[self.app.root.carousel.current_slide.clicked].found) > 50:
+                self.meaning = str(rows[self.app.root.carousel.current_slide.clicked].found)[:50] + '...'
+            else:
+                self.meaning = rows[self.app.root.carousel.current_slide.clicked].found
+            if len(str(rows[self.app.root.carousel.current_slide.clicked].category)) > 50:
+                self.category = str(rows[self.app.root.carousel.current_slide.clicked].category)[:50] + '...'
+            else:
+                self.category = str(rows[self.app.root.carousel.current_slide.clicked].category)
             self.url = rows[self.app.root.carousel.current_slide.clicked].url
 
             if rows[self.app.root.carousel.current_slide.clicked].disambiguation_url == 1:

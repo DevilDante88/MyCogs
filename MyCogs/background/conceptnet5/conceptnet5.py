@@ -117,6 +117,36 @@ class ConceptNet5:
 
         self.app.root.editslide.category.text = res
 
+    ###########################################################################
+
+    def search_addnew(self, text):
+
+        self.query_args['text'] = text.encode('ascii', 'ignore')
+        self.text = text
+        self.encoded_query_args = urllib.urlencode(self.query_args)
+        url = ''.join(['%s%s' % (self.BASE_SEARCH_URL, '?')]) + self.encoded_query_args
+        request = UrlRequest(url, self.found_categories_addnew)
+
+    def found_categories_addnew(self, request, data):
+
+        print request
+        print data
+        res = ''
+
+        if data['numFound'] != 0:
+
+            cat = []
+            for idx, node in enumerate(data['edges']):
+
+                if node['end'][6:] != self.text:
+                    cat.append(node['end'][6:].encode('utf-8', 'ignore'))
+
+            res = ", ".join(cat)
+
+            print res
+
+        self.app.root.foundslide.new_category.text = str(res)
+
 
 
 

@@ -75,7 +75,7 @@ class SenderThread(Thread):
         access = self.db.getUserAccount(self.app.root.userID)
 
         self.mr.connect()
-        if self.mr.login(access[0], access[1]):
+        if self.mr.login(access[0]):
             self.mr.setFolder()
 
             #elaborate messages
@@ -110,6 +110,15 @@ class SenderThread(Thread):
         popup.dismiss() #close the popup
 
         return
+
+    def stop(self):
+
+        """
+        force the thread to stop
+        :return:
+        """
+        print 'Stop sender thread'
+        self.__stop = True
 
     ###########################################################################################
     ## FUNCTION TO RETRIEVE CHUNK
@@ -279,11 +288,19 @@ class SenderThread(Thread):
 
                 ## add to KL
                 for found in v[1:]:
-                    found = found.encode('ascii', 'ignore')
+                    try:
+                        found = found.encode('ascii', 'ignore')
+                    except UnicodeDecodeError:
+                        pass
+
                     url, dis = self.wiki.geturl(found)
                     if url == '':
                         good_url = True
-                    self.db.insert_kl_nocat(chunk=k, found=found, url=url, dis=dis, ngram=len(k.split(' ')))
+                    self.db.insert_kl_nocat(chunk=k.encode('ascii', 'ignore'),
+                                            found=found.decode('utf-8', 'ignore'),
+                                            url=url,
+                                            dis=dis,
+                                            ngram=len(k.split(' ')))
 
                 ## category retrieval
                 self.concepnet.search(k)
