@@ -45,7 +45,8 @@ TODO list
 * create a "search" screen
 * keep the user password only per single session
 * retrieve image from wikipedia (if possible)
-* implement a multi-language noun phrase extraction (only english in supported at the moment) 
+* implement a multi-language noun phrase extraction (only english in supported at the moment)
+* refer the category to the single meaning found wikipedia and not from the original extracted NP
 
 Known Bugs
 ------------
